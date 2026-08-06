@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;700&display=swap');
@@ -1297,28 +1298,64 @@ async function uploadCsvRoster() {
     const fileInput = document.getElementById('csvFileInput');
     const statusText = document.getElementById('csvStatus');
     
-    if (!fileInput.files[0]) return alert("Please select the registration CSV file.");
+    if (!fileInput.files[0]) return alert("Please select the CSV file.");
     
-    statusText.innerText = "Syncing Database... Please wait.";
+    statusText.innerText = "⏳ READING FILE...";
     
-    const formData = new FormData();
-    formData.append('playerCsv', fileInput.files[0]);
+    Papa.parse(fileInput.files[0], {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            console.log("Parsed Data:", results.data);
+            
+            // Map the CSV columns to your Player model
+            const players = results.data.map(row => {
+                // Find keys regardless of exact numbering/spacing
+                const find = (keys) => {
+                    const foundKey = Object.keys(row).find(k => keys.some(kw => k.toLowerCase().includes(kw.toLowerCase())));
+                    return foundKey ? row[foundKey] : null;
+                };
 
-    try {
-        const response = await fetch('/upload-csv', {
-            method: 'POST',
-            body: formData
-        });
-        const result = await response.json();
-        
-        statusText.innerText = result.message;
-        alert(result.message);
-        fileInput.value = ""; // Reset input
-    } catch (err) {
-        statusText.innerText = "Error syncing CSV.";
-        console.error(err);
-    }
+                const name = find(['Full Name']) || "Unknown Player";
+                const strength = parseInt(find(['Team Strength'])) || 0;
+                const phone = find(['Phone', 'Whatsapp']) || "";
+                const image = find(['Screenshot', 'Team']) || "";
+
+                // Auto-Tiering
+                let cardType = "Nebula"; let baseValue = 50;
+                if (strength >= 3300) { cardType = "Supernova"; baseValue = 150; }
+                else if (strength >= 3250) { cardType = "Nova"; baseValue = 120; }
+                else if (strength >= 3200) { cardType = "Quasar"; baseValue = 100; }
+                else if (strength >= 3150) { cardType = "Nebula"; baseValue = 80; }
+
+                return {
+                    name: name.trim(),
+                    strength: strength,
+                    cardType: cardType,
+                    baseValue: baseValue,
+                    phone: phone,
+                    imageUrl: image.trim(),
+                    status: 'Available'
+                };
+            });
+
+            if (players.length > 0) {
+                statusText.innerText = `⏳ SYNCING ${players.length} PLAYERS...`;
+                // SEND DATA VIA SOCKET (More reliable on Vercel)
+                socket.emit('bulkAddPlayers', players);
+            } else {
+                statusText.innerText = "❌ NO DATA FOUND IN CSV";
+            }
+        }
+    });
 }
+
+// Add this listener to confirm success
+socket.on('bulkImportSuccess', (msg) => {
+    document.getElementById('csvStatus').innerText = "✅ " + msg;
+    alert(msg);
+    document.getElementById('csvFileInput').value = "";
+});
 
 
     function generatePDF() {
