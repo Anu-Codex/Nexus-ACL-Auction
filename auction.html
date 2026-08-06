@@ -300,6 +300,7 @@ body {
                         <div id="auctionDisplay" class="w-full"><div class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-4xl text-cyan-400/20 mb-4"></i><p class="text-gray-500 uppercase tracking-widest font-bold">Synchronizing...</p></div></div>
                         <div id="adminControls" class="hidden mt-10 pt-8 border-t border-white/5 w-full flex justify-center gap-6">
                             <button onclick="socket.emit('sellPlayer')" class="bg-blue-600 hover:bg-blue-500 text-white px-10 py-3 rounded-2xl font-black btn-premium shadow-xl">SELL PLAYER</button>
+                            <button onclick="socket.emit('markUnsold')" class="bg-orange-600 hover:bg-orange-500 text-white px-10 py-3 rounded-2xl font-black btn-premium shadow-xl">MARK UNSOLD</button>
                             <button onclick="socket.emit('cancelAuction')" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-10 py-3 rounded-2xl font-black btn-premium">CANCEL</button>
                         </div>
                     </div>
@@ -675,7 +676,9 @@ function startApp() {
                 <td class="p-6 text-gray-400 font-bold">${p.strength}</td>
                 <td class="p-4 text-gray-500">${p.phone || 'N/A'}</td>
                 <td class="p-6"><span class="px-3 py-1 rounded-lg text-[10px] font-black border border-white/10 bg-gray-800 tracking-widest uppercase">${p.cardType}</span></td>
-                <td class="p-6 font-black uppercase text-[10px] tracking-widest ${p.status === 'Available' ? 'text-cyan-400' : 'text-red-500'}">${p.status}</td>
+                <td class="p-6 font-black uppercase text-[10px] tracking-widest ${p.status === 'Available' ? 'text-cyan-400' : p.status === 'Unsold' ? 'text-orange-500' : 'text-red-500'}">
+    ${p.status}
+</td>
                 <td class="p-6 text-white font-black">${p.baseValue} M</td>
                 <td class="p-4 text-center">
                     ${p.imageUrl ? `<img src="${p.imageUrl}" class="w-12 h-8 object-cover rounded border border-cyan-400/50 mx-auto">` : `<i class="fa-solid fa-image text-gray-700"></i>`}
@@ -785,9 +788,21 @@ function startApp() {
                         </div>
                         <button onclick="skip()" class="w-full bg-red-600/10 text-red-500 border-2 border-red-600/30 py-4 rounded-3xl font-black uppercase tracking-[0.3em] ${hasSkipped ? 'hidden' : ''}">SKIP ROUND</button>
                     </div>` : ''}
-                ${user && user.role === 'admin' ? `<div class="flex gap-6 mt-12"><button onclick="socket.emit('startFinalCall')" class="bg-yellow-500 hover:bg-yellow-400 text-black px-10 py-4 rounded-2xl font-black text-lg shadow-[0_0_20px_rgba(234,255,0,0.4)] transition-all">
-            ⚡ INITIATE FINAL CALL
-        </button><button onclick="socket.emit('sellPlayer')" class="bg-blue-600 text-white px-12 py-4 rounded-2xl font-black">SELL PLAYER</button><button onclick="socket.emit('cancelAuction')" class="bg-gray-800 text-gray-400 px-12 py-4 rounded-2xl font-black">CANCEL</button></div>` : ''}
+                    ${user && user.role === 'admin' ? `
+    <div class="flex flex-wrap justify-center gap-4 mt-12">
+        <button onclick="socket.emit('startFinalCall')" class="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black text-sm shadow-[0_0_20px_rgba(234,255,0,0.4)]">
+            ⚡ FINAL CALL
+        </button>
+        <button onclick="socket.emit('sellPlayer')" class="bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-sm">
+            SELL PLAYER
+        </button>
+        <button onclick="socket.emit('markUnsold')" class="bg-orange-600 text-white px-8 py-4 rounded-2xl font-black text-sm">
+            MARK UNSOLD
+        </button>
+        <button onclick="socket.emit('cancelAuction')" class="bg-gray-800 text-gray-400 px-8 py-4 rounded-2xl font-black text-sm">
+            CANCEL
+        </button>
+    </div>` : ''}
             </div>`;
     }
 
