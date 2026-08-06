@@ -461,6 +461,9 @@ body {
 <button onclick="generatePDF()" class="w-full bg-red-700/20 hover:bg-red-700 text-red-500 hover:text-white border border-red-500/20 p-5 rounded-[1.5rem] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 mt-8">
     <i class="fa-solid fa-file-pdf"></i> Generate Final Report
 </button>
+                    <button id="showcaseBtn" onclick="toggleSlideshow()" class="bg-purple-600 hover:bg-purple-500 text-white px-10 py-3 rounded-2xl font-black btn-premium shadow-xl">
+    SHOWCASE UNSOLD
+                    </button>
 
 
 
@@ -1175,6 +1178,69 @@ function triggerMegaReset() {
     // Use the existing render function to show only matches
     renderPlayers(filtered);
         }
+        let slideshowActive = false;
+
+function toggleSlideshow() {
+    slideshowActive = !slideshowActive;
+    socket.emit('toggleSlideshow', slideshowActive);
+    
+    // Update button text
+    const btn = document.getElementById('showcaseBtn');
+    btn.innerText = slideshowActive ? "STOP SHOWCASE" : "SHOWCASE UNSOLD";
+    btn.classList.toggle('bg-red-600', slideshowActive);
+}
+        socket.on('updateSlideshow', (state) => {
+    const overlay = document.getElementById('slideshowOverlay');
+    const content = document.getElementById('slideshowContent');
+    const dotsContainer = document.getElementById('slideshowDots');
+
+    if (!state.active) {
+        overlay.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        return;
+    }
+
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    const p = state.players[state.currentIndex];
+    
+    // Update Main Content
+    content.innerHTML = `
+        <div class="lg:w-1/2 flex justify-center animate-in slide-in-from-left duration-700">
+            <div class="relative group">
+                <div class="absolute -inset-4 bg-orange-500/20 blur-3xl rounded-full opacity-50"></div>
+                <img src="${p.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'}" 
+                     class="relative w-[500px] aspect-video object-cover rounded-[2rem] border-2 border-orange-500/30 shadow-2xl">
+            </div>
+        </div>
+        <div class="lg:w-1/2 text-center lg:text-left animate-in slide-in-from-right duration-700">
+            <span class="bg-orange-500/10 text-orange-500 border border-orange-500/20 px-4 py-1 rounded-full text-xs font-black tracking-widest uppercase">
+                Currently Unsold
+            </span>
+            <h1 class="text-8xl font-black text-white mt-4 mb-2 uppercase italic leading-none">${p.name}</h1>
+            <div class="flex items-center justify-center lg:justify-start gap-6 mb-8">
+                <div class="text-center">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Star Rating</p>
+                    <p class="text-3xl font-black text-cyan-400">${p.strength}</p>
+                </div>
+                <div class="w-px h-10 bg-white/10"></div>
+                <div class="text-center">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Base Price</p>
+                    <p class="text-3xl font-black text-yellow-400">${p.baseValue}M</p>
+                </div>
+            </div>
+            <p class="text-gray-400 text-lg font-medium max-w-md">
+                This player is currently available for re-nomination. Contact the auctioneer to restart the bid.
+            </p>
+        </div>
+    `;
+
+    // Update Navigation Dots
+    dotsContainer.innerHTML = state.players.map((_, i) => `
+        <div class="h-1.5 w-8 rounded-full transition-all duration-500 ${i === state.currentIndex ? 'bg-orange-500 w-12' : 'bg-gray-800'}"></div>
+    `).join('');
+});
 
     function generatePDF() {
         const { jsPDF } = window.jspdf; const doc = new jsPDF();
@@ -1207,5 +1273,22 @@ function triggerMegaReset() {
         </p>
             </center>
     </footer>
+    <!-- CINEMATIC SLIDESHOW OVERLAY -->
+<div id="slideshowOverlay" class="hidden fixed inset-0 z-[400] bg-[#0a0f16] flex flex-col items-center justify-center p-10 animate-in fade-in duration-700">
+    <div class="absolute top-10 flex flex-col items-center">
+        <span class="text-orange-500 font-black tracking-[0.5em] text-sm uppercase mb-2">Reviewing Unsold Legends</span>
+        <h2 class="text-4xl font-black text-white italic">ACCELERATED <span class="text-orange-500">SHOWCASE</span></h2>
+        <div class="h-1 w-32 bg-orange-500 mt-4 rounded-full shadow-[0_0_15px_#f97316]"></div>
+    </div>
+
+    <div id="slideshowContent" class="w-full max-w-5xl flex flex-col lg:flex-row items-center gap-16 transition-all duration-1000 transform">
+        <!-- Injected via JavaScript -->
+    </div>
+
+    <div class="absolute bottom-10 w-full px-20 flex justify-between items-center">
+        <p class="text-gray-600 font-bold text-xs uppercase tracking-[0.3em]">Pitch Kings FC | Unsold Gallery</p>
+        <div id="slideshowDots" class="flex gap-2"></div>
+    </div>
+</div>
 </body>
 </html>
