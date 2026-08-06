@@ -464,6 +464,9 @@ body {
                     <button id="showcaseBtn" onclick="toggleSlideshow()" class="bg-purple-600 hover:bg-purple-500 text-white px-10 py-3 rounded-2xl font-black btn-premium shadow-xl">
     SHOWCASE UNSOLD
                     </button>
+                    <button onclick="localCloseSlideshow()" class="absolute top-8 right-8 text-white/30 hover:text-white text-4xl z-[450] transition-all">
+        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
 
 
 
@@ -1180,28 +1183,53 @@ function triggerMegaReset() {
         }
         let slideshowActive = false;
 
+// 1. Local Close (Only closes for the person who clicks it)
+function localCloseSlideshow() {
+    document.getElementById('slideshowOverlay').classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Re-enable scrolling
+}
+
+// 2. Updated Toggle (For Admin to stop it for EVERYONE)
 function toggleSlideshow() {
-    slideshowActive = !slideshowActive;
-    socket.emit('toggleSlideshow', slideshowActive);
+    // If it's currently running, we want to stop it
+    if (slideshowActive) {
+        socket.emit('toggleSlideshow', false);
+        slideshowActive = false;
+    } else {
+        // If it's not running, we want to start it
+        socket.emit('toggleSlideshow', true);
+        slideshowActive = true;
+    }
     
-    // Update button text
+    // Update the dashboard button appearance
     const btn = document.getElementById('showcaseBtn');
-    btn.innerText = slideshowActive ? "STOP SHOWCASE" : "SHOWCASE UNSOLD";
-    btn.classList.toggle('bg-red-600', slideshowActive);
+    if (btn) {
+        btn.innerText = slideshowActive ? "STOP SHOWCASE" : "SHOWCASE UNSOLD";
+        if (slideshowActive) {
+            btn.classList.add('bg-red-600');
+            btn.classList.remove('bg-purple-600');
+        } else {
+            btn.classList.remove('bg-red-600');
+            btn.classList.add('bg-purple-600');
+        }
+    }
 }
         socket.on('updateSlideshow', (state) => {
     const overlay = document.getElementById('slideshowOverlay');
-    const content = document.getElementById('slideshowContent');
-    const dotsContainer = document.getElementById('slideshowDots');
-
-    if (!state.active) {
+    
+    // If the admin stops the showcase, hide it for everyone automatically
+    if (!state || !state.active) {
         overlay.classList.add('hidden');
         document.body.style.overflow = 'auto';
+        slideshowActive = false; // Sync local variable
         return;
     }
 
+    // Otherwise, show it
     overlay.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    
+    // ... rest of your rendering code (content.innerHTML, etc) ...
 
     const p = state.players[state.currentIndex];
     
@@ -1286,7 +1314,7 @@ function toggleSlideshow() {
     </div>
 
     <div class="absolute bottom-10 w-full px-20 flex justify-between items-center">
-        <p class="text-gray-600 font-bold text-xs uppercase tracking-[0.3em]">Pitch Kings FC | Unsold Gallery</p>
+        <p class="text-gray-600 font-bold text-xs uppercase tracking-[0.3em]">Nexus Legends FC | Unsold Gallery</p>
         <div id="slideshowDots" class="flex gap-2"></div>
     </div>
 </div>
