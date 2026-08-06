@@ -456,6 +456,20 @@ body {
             </tbody>
         </table>
     </div>
+    <div class="mt-10 pt-8 border-t border-cyan-500/20">
+    <h3 class="text-sm font-black text-cyan-400 uppercase tracking-widest mb-4">
+        <i class="fa-solid fa-file-csv"></i> Bulk CSV Registration
+    </h3>
+    <div class="flex flex-col md:flex-row gap-4 items-center">
+        <input type="file" id="csvFileInput" accept=".csv" 
+               class="flex-1 bg-gray-900 border border-white/10 p-3 rounded-xl text-xs text-white">
+        <button onclick="uploadCsvRoster()" 
+                class="bg-green-500 text-black font-black px-8 py-3 rounded-xl uppercase text-[10px] btn-premium">
+            Sync Registration Data
+        </button>
+    </div>
+    <p id="csvStatus" class="text-[10px] text-gray-500 mt-2 uppercase font-bold"></p>
+    </div>
 </div>
                     <!-- Line 357: PDF and Chat Section starts outside the admin-only divs -->
 <button onclick="generatePDF()" class="w-full bg-red-700/20 hover:bg-red-700 text-red-500 hover:text-white border border-red-500/20 p-5 rounded-[1.5rem] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 mt-8">
@@ -1279,6 +1293,33 @@ function toggleSlideshow() {
         `).join('');
     }
 });
+async function uploadCsvRoster() {
+    const fileInput = document.getElementById('csvFileInput');
+    const statusText = document.getElementById('csvStatus');
+    
+    if (!fileInput.files[0]) return alert("Please select the registration CSV file.");
+    
+    statusText.innerText = "Syncing Database... Please wait.";
+    
+    const formData = new FormData();
+    formData.append('playerCsv', fileInput.files[0]);
+
+    try {
+        const response = await fetch('/upload-csv', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        
+        statusText.innerText = result.message;
+        alert(result.message);
+        fileInput.value = ""; // Reset input
+    } catch (err) {
+        statusText.innerText = "Error syncing CSV.";
+        console.error(err);
+    }
+}
+
 
     function generatePDF() {
         const { jsPDF } = window.jspdf; const doc = new jsPDF();
