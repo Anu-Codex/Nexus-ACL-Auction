@@ -1319,7 +1319,8 @@ async function uploadCsvRoster() {
                 const name = find(['Full Name']) || "Unknown Player";
                 const strength = parseInt(find(['Team Strength'])) || 0;
                 const phone = find(['Phone', 'Whatsapp']) || "";
-                const image = find(['Screenshot', 'Team']) || "";
+                let image = getVal(['Screenshot', 'amazonaws']) || ""; 
+                if (image) image = image.trim();
 
                 // Auto-Tiering
                 let cardType = "Nebula"; let baseValue = 50;
