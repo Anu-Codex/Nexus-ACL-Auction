@@ -182,6 +182,14 @@ body {
     font-weight: 900;
     text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
 }
+        #progressCircle {
+    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.8));
+}
+
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
     </style>
 </head>
 <body class="min-h-screen">
@@ -264,6 +272,47 @@ body {
             <p id="authError" class="text-red-400 text-sm mt-6 hidden font-bold"></p>
         </div>
     </div> <!-- CLOSED CORRECTLY -->
+    <!-- FUTURISTIC NEON CIRCLE LOADER -->
+<div id="megaLoader" class="fixed inset-0 z-[600] bg-[#0a0f16] flex flex-col items-center justify-center transition-all duration-1000">
+    <div class="relative w-72 h-72">
+        <!-- Outer Glow Ring -->
+        <div class="absolute inset-0 rounded-full border-2 border-cyan-500/10 blur-xl animate-pulse"></div>
+        
+        <!-- Background Static Ring -->
+        <svg class="w-full h-full transform -rotate-90">
+            <circle cx="144" cy="144" r="120" stroke="rgba(255,255,255,0.05)" stroke-width="12" fill="transparent" stroke-dasharray="10 5" />
+            
+            <!-- Technical Dashed Ring -->
+            <circle cx="144" cy="144" r="135" stroke="rgba(0,229,255,0.1)" stroke-width="2" fill="transparent" stroke-dasharray="1 10" class="animate-[spin_10s_linear_infinite]" />
+
+            <!-- MAIN PROGRESS CIRCLE -->
+            <circle id="progressCircle" cx="144" cy="144" r="120" stroke="url(#neonGradient)" stroke-width="12" fill="transparent"
+                    stroke-dasharray="754" stroke-dashoffset="754"
+                    stroke-linecap="round"
+                    style="transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);" />
+            
+            <!-- Define Gradient -->
+            <defs>
+                <linearGradient id="neonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#00e5ff;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#eaff00;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <!-- Center Text -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span id="loadPercent" class="text-6xl font-black text-white italic tracking-tighter">0%</span>
+            <div class="h-1 w-12 ef-gradient mt-2 rounded-full"></div>
+        </div>
+    </div>
+    
+    <!-- Status Text -->
+    <div class="mt-12 text-center">
+        <p id="loadStatus" class="text-cyan-400 font-black tracking-[0.5em] uppercase text-[10px] mb-2 animate-pulse">Initializing Nexus Link</p>
+        <p class="text-gray-600 font-bold text-[8px] uppercase tracking-widest">Securing Database Synchronization</p>
+    </div>
+</div>
 
     <!-- DASHBOARD -->
     <div id="dashboard" class="hidden">
@@ -1384,6 +1433,60 @@ socket.on('bulkImportSuccess', (msg) => {
     document.getElementById('csvStatus').innerText = "✅ " + msg;
     alert(msg);
     document.getElementById('csvFileInput').value = "";
+});
+        // --- MEGA LOADER LOGIC ---
+const CIRCUMFERENCE = 754; // 2 * PI * 120 (radius)
+
+function updateMegaLoader(percent, status) {
+    const circle = document.getElementById('progressCircle');
+    const text = document.getElementById('loadPercent');
+    const statusText = document.getElementById('loadStatus');
+    
+    if(!circle || !text) return;
+
+    // Calculate offset
+    const offset = CIRCUMFERENCE - (percent / 100) * CIRCUMFERENCE;
+    circle.style.strokeDashoffset = offset;
+    text.innerText = `${Math.round(percent)}%`;
+    if(status) statusText.innerText = status;
+
+    // Handle Finish
+    if(percent >= 100) {
+        setTimeout(() => {
+            document.getElementById('megaLoader').classList.add('opacity-0', 'pointer-events-none', 'scale-110');
+            // Show the floating music toggle after loader is gone
+            if(document.getElementById('musicToggle')) document.getElementById('musicToggle').classList.remove('hidden');
+        }, 800);
+    }
+}
+
+// 1. Initial State
+document.addEventListener('DOMContentLoaded', () => updateMegaLoader(15, "Loading Assets"));
+
+// 2. Update when socket connects
+socket.on('connect', () => {
+    updateMegaLoader(45, "Nexus Established");
+});
+
+// 3. Update when initial data arrives (Update your existing initialData listener)
+socket.on('initialData', (data) => {
+    updateMegaLoader(85, "Synchronizing Data");
+    
+    // Existing logic here...
+    currentPlayers = data.players;
+    currentTeams = data.teams;
+    renderPlayers(data.players);
+    renderTeams(data.teams);
+    renderAuction(data.state);
+    
+    // Finalizing
+    setTimeout(() => updateMegaLoader(100, "Ready for Action"), 500);
+});
+
+// 4. Update Error State if server is down
+socket.on('connect_error', () => {
+    updateMegaLoader(0, "Connection Error - Retrying");
+    document.getElementById('loadStatus').classList.add('text-red-500');
 });
 
 
