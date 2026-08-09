@@ -206,6 +206,26 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+        /* Optimize Table Performance */
+#playerList {
+    /* Tells the browser to only render rows near the viewport */
+    content-visibility: auto;
+    contain-intrinsic-size: 1000px; 
+}
+
+#playerList tr {
+    /* Fixes row height so the browser doesn't have to "guess" sizes while scrolling */
+    height: 80px; 
+    /* Encourages GPU acceleration */
+    transform: translateZ(0);
+}
+
+/* Optimize scroll container */
+.overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    will-change: scroll-position;
+}
     </style>
 </head>
 <body class="min-h-screen">
