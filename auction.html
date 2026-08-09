@@ -886,7 +886,6 @@ function startApp() {
         if (!container || !state || !state.activePlayerId) {
     container.innerHTML = `
         <div class="text-center py-20 flex flex-col items-center justify-center animate-in fade-in duration-700">
-            <!-- NEW CIRCULAR ANIMATION -->
             <div class="auction-spinner"></div>
             
             <p class="text-3xl font-black uppercase tracking-[0.4em] text-white/20 animate-pulse italic">
@@ -924,7 +923,7 @@ function startApp() {
         ` : ''}
                 <div class="flex flex-col lg:flex-row items-center gap-10 w-full justify-center">
                     <div class="premium-card-neon w-64 h-80 rounded-[2rem] p-6 flex flex-col items-center justify-between shadow-2xl">
-                        <span class="text-4xl font-black text-cyan-400">Star ${p.strength}</span>
+                        <span class="text-4xl font-black text-cyan-400">Strength ${p.strength}</span>
                         <div class="text-center">
                             <h2 class="text-3xl player-name-prominent uppercase italic">${p.name}</h2>
                         </div>
