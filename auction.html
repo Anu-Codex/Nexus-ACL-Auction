@@ -190,6 +190,22 @@ body {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+        /* Circular Animation for Auction Block */
+.auction-spinner {
+    width: 80px;
+    height: 80px;
+    border: 5px solid rgba(234, 255, 0, 0.1); /* Faint ring */
+    border-top: 5px solid #eaff00;           /* Neon Yellow top */
+    border-radius: 50%;
+    filter: drop-shadow(0 0 10px rgba(234, 255, 0, 0.6));
+    animation: spin-pure 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    margin-bottom: 2rem;
+}
+
+@keyframes spin-pure {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
     </style>
 </head>
 <body class="min-h-screen">
@@ -778,18 +794,18 @@ function startApp() {
     function renderAuction(state) {
         const container = document.getElementById('auctionDisplay');
         if (!container || !state || !state.activePlayerId) {
-        container.innerHTML = `
-            <div class="text-center py-20 flex flex-col items-center justify-center">
-                <div class="dotted-loader mb-10">
-                    <div></div><div></div><div></div><div></div>
-                    <div></div><div></div><div></div><div></div>
-                </div>
-                <p class="text-2xl font-black uppercase tracking-[0.5em] text-white/30 animate-pulse">
-                    Waiting for Nomination
-                </p>
-            </div>`;
-        return;
-        }
+    container.innerHTML = `
+        <div class="text-center py-20 flex flex-col items-center justify-center animate-in fade-in duration-700">
+            <!-- NEW CIRCULAR ANIMATION -->
+            <div class="auction-spinner"></div>
+            
+            <p class="text-3xl font-black uppercase tracking-[0.4em] text-white/20 animate-pulse italic">
+                Waiting For <span class="text-cyan-400/30">Nomination</span>
+            </p>
+            <div class="h-1 w-20 bg-white/5 mt-4 rounded-full"></div>
+        </div>`;
+    return;
+}
 
         const p = state.activePlayerId;
         const isHighest = user && (user.name === state.highestBidder);
