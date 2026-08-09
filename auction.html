@@ -564,8 +564,13 @@ body {
     }
 
     function guestAccess() {
-    // Instead of showing a step, directly tell the server to let us in
+    // Tell the server to log us in as a guest immediately
     socket.emit('guestSignIn', { password: "" }); 
+    
+    // Optional: Show a loading status on the button
+    const btn = document.querySelector('#auth_choice button');
+    btn.innerText = "ENTERING ARENA...";
+    btn.disabled = true;
     }
 
 
@@ -1429,21 +1434,25 @@ function updateMegaLoader(percent, status) {
     const circle = document.getElementById('progressCircle');
     const text = document.getElementById('loadPercent');
     const statusText = document.getElementById('loadStatus');
+    const loader = document.getElementById('megaLoader');
     
-    if(!circle || !text) return;
+    if(!circle || !text || !loader) return;
 
-    // Calculate offset
     const offset = CIRCUMFERENCE - (percent / 100) * CIRCUMFERENCE;
     circle.style.strokeDashoffset = offset;
     text.innerText = `${Math.round(percent)}%`;
     if(status) statusText.innerText = status;
 
-    // Handle Finish
     if(percent >= 100) {
         setTimeout(() => {
-            document.getElementById('megaLoader').classList.add('opacity-0', 'pointer-events-none', 'scale-110');
-            // Show the floating music toggle after loader is gone
-            if(document.getElementById('musicToggle')) document.getElementById('musicToggle').classList.remove('hidden');
+            // Smoothly fade out and shrink
+            loader.style.opacity = '0';
+            loader.style.transform = 'scale(1.1)';
+            loader.style.pointerEvents = 'none';
+            
+            // Show music toggle
+            const music = document.getElementById('musicToggle');
+            if(music) music.classList.remove('hidden');
         }, 800);
     }
 }
