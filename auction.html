@@ -346,6 +346,27 @@ body {
         <p class="text-gray-600 font-bold text-[8px] uppercase tracking-widest">Securing Database Synchronization</p>
     </div>
 </div>
+    <!-- ASSET SYNC PROMPT -->
+<div id="assetPrompt" class="hidden fixed inset-0 z-[650] bg-[#0a0f16]/95 backdrop-blur-md flex items-center justify-center p-6">
+    <div class="premium-glass p-8 rounded-[2.5rem] border border-cyan-500/30 max-w-sm w-full text-center shadow-[0_0_50px_rgba(0,229,255,0.2)]">
+        <div class="w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-cyan-500/30">
+            <i class="fa-solid fa-cloud-arrow-down text-3xl text-cyan-400 animate-bounce"></i>
+        </div>
+        <h3 class="text-2xl font-black text-white uppercase tracking-tighter">Assets Required</h3>
+        <p class="text-gray-400 text-xs mt-3 mb-8 leading-relaxed">To ensure high-resolution player screenshots load instantly, we need to sync visual assets (approx. 5-10MB).</p>
+        
+        <div id="syncProgressContainer" class="hidden mb-6">
+            <div class="w-full bg-gray-900 h-1.5 rounded-full overflow-hidden mb-2">
+                <div id="syncBar" class="h-full ef-gradient w-0 transition-all duration-300"></div>
+            </div>
+            <p id="syncText" class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest">Syncing 0%</p>
+        </div>
+
+        <button id="startSyncBtn" onclick="startAssetSync()" class="w-full ef-gradient text-black font-black py-4 rounded-2xl uppercase text-sm btn-premium">
+            Download & Sync
+        </button>
+    </div>
+</div>
 
     <!-- DASHBOARD -->
     <div id="dashboard" class="hidden">
@@ -1540,6 +1561,84 @@ function triggerClearPlayers() {
         }
     }
 }
+        // --- ASSET SYNC LOGIC ---
+async function checkAssets() {
+    const isSynced = localStorage.getItem('nexus_assets_synced');
+    const loader = document.getElementById('megaLoader');
+    
+    // Only show prompt if not synced and we have players to sync
+    if (!isSynced && currentPlayers.length > 0) {
+        // Pause the megaLoader at 85%
+        updateMegaLoader(85, "Waiting for Asset Sync");
+        document.getElementById('assetPrompt').classList.remove('hidden');
+    } else {
+        // If already synced, just finish the megaLoader
+        updateMegaLoader(100, "Ready for Action");
+    }
+}
+
+async function startAssetSync() {
+    const btn = document.getElementById('startSyncBtn');
+    const progressContainer = document.getElementById('syncProgressContainer');
+    const syncBar = document.getElementById('syncBar');
+    const syncText = document.getElementById('syncText');
+    
+    btn.classList.add('hidden');
+    progressContainer.classList.remove('hidden');
+
+    const imageUrls = currentPlayers
+        .map(p => p.imageUrl)
+        .filter(url => url && url.startsWith('http'));
+
+    const total = imageUrls.length;
+    let loaded = 0;
+
+    if (total === 0) {
+        finishSync();
+        return;
+    }
+
+    // Load images one by one
+    const promises = imageUrls.map(url => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.src = url;
+            img.onload = img.onerror = () => {
+                loaded++;
+                const percent = (loaded / total) * 100;
+                syncBar.style.width = percent + "%";
+                syncText.innerText = `Syncing Visuals: ${Math.round(percent)}%`;
+                resolve();
+            };
+        });
+    });
+
+    await Promise.all(promises);
+    finishSync();
+}
+
+function finishSync() {
+    localStorage.setItem('nexus_assets_synced', 'true');
+    document.getElementById('assetPrompt').classList.add('opacity-0');
+    setTimeout(() => {
+        document.getElementById('assetPrompt').classList.add('hidden');
+        updateMegaLoader(100, "Sync Complete");
+    }, 500);
+}
+
+// UPDATE: Modify your existing initialData listener to trigger the check
+socket.on('initialData', (data) => {
+    updateMegaLoader(70, "Data Received");
+    
+    currentPlayers = data.players;
+    currentTeams = data.teams;
+    renderPlayers(data.players);
+    renderTeams(data.teams);
+    renderAuction(data.state);
+    
+    // START THE ASSET CHECK HERE
+    checkAssets();
+});
 
     function generatePDF() {
         const { jsPDF } = window.jspdf; const doc = new jsPDF();
