@@ -488,6 +488,16 @@ body {
         Erase All Data & Start Fresh
     </button>
     <p class="text-[9px] text-gray-600 mt-2 text-center uppercase">This will delete all players, teams, chats, and accounts permanently.</p>
+    <button onclick="triggerClearPlayers()" class="w-full bg-orange-600/10 hover:bg-orange-600 text-orange-500 hover:text-white border border-orange-500/30 py-3 rounded-2xl font-black uppercase transition-all flex items-center justify-center gap-3 mb-3 text-xs">
+        <i class="fa-solid fa-users-slash"></i> 
+        Clear Only Player Roster
+    </button>
+
+    <!-- EXISTING: HARD RESET BUTTON -->
+    <button onclick="triggerMegaReset()" class="w-full bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/30 py-4 rounded-2xl font-black uppercase transition-all flex items-center justify-center gap-3">
+        <i class="fa-solid fa-skull-crossbones"></i> 
+        Erase ALL Data (Hard Reset)
+    </button>
 </div>
     
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -1524,6 +1534,18 @@ socket.on('connect_error', () => {
     document.getElementById('loadStatus').classList.add('text-red-500');
 });
 
+        // --- CLEAR PLAYERS ONLY FUNCTION ---
+function triggerClearPlayers() {
+    if (user.role !== 'admin') return;
+
+    const confirm1 = confirm("⚠️ Are you sure you want to delete ALL players from the roster?");
+    if (confirm1) {
+        const confirm2 = confirm("This will NOT delete teams, budgets, or captain accounts. Proceed with clearing players?");
+        if (confirm2) {
+            socket.emit('clearOnlyPlayers');
+        }
+    }
+}
 
     function generatePDF() {
         const { jsPDF } = window.jspdf; const doc = new jsPDF();
