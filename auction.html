@@ -422,7 +422,7 @@ body {
                         <div class="overflow-x-auto">
                             <table class="w-full text-left">
                                 <thead class="bg-black/40 text-[10px] uppercase tracking-[0.2em] text-gray-500">
-                                    <tr><th class="p-6">Player Identity</th><th class="p-6">Star</th><th class="p-6">Phone</th><th class="p-6">Tier</th><th class="p-6">Status</th><th class="p-6">Base Value</th><th class="p-6 text-center">Operation</th></tr>
+                                    <tr><th class="p-6">Player Identity</th><th class="p-6">Strength</th><th class="p-6">Phone</th><th class="p-6">Tier</th><th class="p-6">Status</th><th class="p-6">Base Value</th><th class="p-6 text-center">Operation</th></tr>
                                 </thead>
                                 <tbody id="playerList" class="text-sm divide-y divide-white/5">
     <!-- This will show UNTIL data arrives -->
@@ -445,7 +445,7 @@ body {
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <input id="pName" type="text" placeholder="Name" class="w-full bg-gray-900 border border-white/10 p-3 rounded-xl text-white">
                             <input id="pStrength" type="number" placeholder="Current Star" class="w-full bg-gray-900 border border-white/10 p-3 rounded-xl text-white">
-                            <select id="pType" class="w-full bg-gray-900 border border-white/10 p-3 rounded-xl text-white"><option>Supernova</option><option>Nova</option><option>Quasar</option><option>Nebula</option></select>
+                            <select id="pType" class="w-full bg-gray-900 border border-white/10 p-3 rounded-xl text-white"><option> BIG TIME</option><option> EPIC</option><option>SHOWTIME</option><option> HIGHLIGHT</option></select>
                             <input id="pBase" type="number" placeholder="Base (M)" class="w-full bg-gray-900 border border-white/10 p-3 rounded-xl text-white">
                             <input id="pPhone" type="number" placeholder="Phone No" class="w-full bg-gray-900 border border-white/10 p-3 rounded-xl text-white">
                             
@@ -1431,11 +1431,11 @@ async function uploadCsvRoster() {
                 }
 
                 // 3. Auto-Tiering
-                let cardType = "Nebula"; let baseValue = 50;
-                if (strength >= 3300) { cardType = "Supernova"; baseValue = 150; }
-                else if (strength >= 3250) { cardType = "Nova"; baseValue = 120; }
-                else if (strength >= 3200) { cardType = "Quasar"; baseValue = 100; }
-                else if (strength >= 3150) { cardType = "Nebula"; baseValue = 80; }
+                let cardType = "HIGHLIGHT"; let baseValue = 2;
+                if (strength >= 3300) { cardType = "BIG TIME"; baseValue = 20; }
+                else if (strength >= 3250) { cardType = "EPIC"; baseValue = 10; }
+                else if (strength >= 3200) { cardType = "SHOWTIME"; baseValue = 5; }
+                else if (strength >= 3150) { cardType = "HIGHLIGHT"; baseValue = 2; }
 
                 processedPlayers.push({
                     name: name.trim(),
@@ -1558,7 +1558,7 @@ setTimeout(() => {
         <div style="width: 50px; height: 2px; background: linear-gradient(90deg, #10b981, #f59e0b); margin: 0 auto 20px; opacity: 0.5;"></div>
         <p style="font-size: 0.75rem; color: #64748b; line-height: 1.6;">
             © Copyright: <span class="dev-name">Anubhav (Developer)</span> &
-            <span class="owner-name">Rudranil (PITCH KINGS FC)</span> 
+            <span class="owner-name"> (NEXUS LEGENDS)</span> 
             2026-27 | All Rights Reserved
         </p>
             </center>
