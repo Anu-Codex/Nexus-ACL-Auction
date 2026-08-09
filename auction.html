@@ -546,33 +546,31 @@ body {
     let authType = "";
 
     // --- AUTH UI LOGIC (RESTORING MISSING FUNCTIONS) ---
-    function showAuthStep(step) {
-        document.getElementById('auth_choice').classList.add('hidden');
-        document.getElementById('auth_special').classList.add('hidden');
-        document.getElementById('auth_otp').classList.add('hidden');
-        document.getElementById('auth_guest').classList.add('hidden');
-        
-        if(step === 'choice') document.getElementById('auth_choice').classList.remove('hidden');
-        if(step === 'otp') document.getElementById('auth_otp').classList.remove('hidden');
-        if(step === 'guest') document.getElementById('auth_guest').classList.remove('hidden');
-        
-        if(step === 'captain' || step === 'admin') {
-            authType = step;
-            document.getElementById('special_title').innerText = step.toUpperCase() + " ACCESS";
-            document.getElementById('auth_special').classList.remove('hidden');
-        }
-    }
-
-    function guestAccess() {
-    // Tell the server to log us in as a guest immediately
-    socket.emit('guestSignIn', { password: "" }); 
+    // --- UPDATED AUTH LOGIC ---
+function showAuthStep(step) {
+    // Hide all possible steps
+    const steps = ['auth_choice', 'auth_special', 'auth_otp'];
+    steps.forEach(s => {
+        const el = document.getElementById(s);
+        if(el) el.classList.add('hidden');
+    });
     
-    // Optional: Show a loading status on the button
-    const btn = document.querySelector('#auth_choice button');
-    btn.innerText = "ENTERING ARENA...";
-    btn.disabled = true;
+    if(step === 'choice') document.getElementById('auth_choice').classList.remove('hidden');
+    if(step === 'otp') document.getElementById('auth_otp').classList.remove('hidden');
+    
+    if(step === 'captain' || step === 'admin') {
+        authType = step;
+        document.getElementById('special_title').innerText = step.toUpperCase() + " ACCESS";
+        document.getElementById('auth_special').classList.remove('hidden');
     }
+}
 
+function guestAccess() {
+    // One-click entry
+    socket.emit('guestSignIn', { password: "" }); 
+    const btn = document.querySelector('button[onclick="guestAccess()"]');
+    if(btn) btn.innerText = "SYNCHRONIZING...";
+}
 
 
 // This handles the password verification via Socket
