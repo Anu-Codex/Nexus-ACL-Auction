@@ -519,7 +519,7 @@ body {
 <button onclick="generatePDF()" class="w-full bg-red-700/20 hover:bg-red-700 text-red-500 hover:text-white border border-red-500/20 p-5 rounded-[1.5rem] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 mt-8">
     <i class="fa-solid fa-file-pdf"></i> Generate Final Report
 </button>
-                    <button id="showcaseBtn" onclick="toggleSlideshow()" class="bg-purple-600 hover:bg-purple-500 text-white px-10 py-3 rounded-2xl font-black btn-premium shadow-xl">
+                    <button id="showcaseBtn" onclick="toggleSlideshow()" class="hidden bg-purple-600 hover:bg-purple-500 text-white px-10 py-3 rounded-2xl font-black btn-premium shadow-xl">
     SHOWCASE UNSOLD
                     </button>
                     <button onclick="localCloseSlideshow()" class="absolute top-8 right-8 text-white/30 hover:text-white text-4xl z-[450] transition-all">
@@ -684,6 +684,7 @@ function startApp() {
         document.getElementById('adminPlayerForm').classList.remove('hidden');
         document.getElementById('adminBonusPanel').classList.remove('hidden');
         document.getElementById('adminUserManagement').classList.remove('hidden'); 
+        document.getElementById('showcaseBtn').classList.remove('hidden');
         
         // --- THIS WAS THE MISSING LINE ---
         document.getElementById('adminTeamManagement').classList.remove('hidden'); 
