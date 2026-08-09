@@ -1489,14 +1489,21 @@ socket.on('connect_error', () => {
 
     function generatePDF() {
         const { jsPDF } = window.jspdf; const doc = new jsPDF();
-        doc.text("PES PARK REPORT", 14, 20);
+        doc.text("CHAMPIONS AUCTION LEAGUE REPORT", 14, 20);
         const soldData = currentPlayers.filter(p => p.status === 'Sold').map(p => [p.name, p.strength, p.phone, p.soldTo]);
-        doc.autoTable({ startY: 30, head: [['Player', 'Star', 'Phone', 'Sold Status']], body: soldData });
-        doc.save('PITCH_KINGS_FC_Report.pdf');
+        doc.autoTable({ startY: 30, head: [['Player', 'Strength', 'Phone', 'Sold Status']], body: soldData });
+        doc.save('NEXUS_LEGENDS_Report.pdf');
     }
 
     if(user) startApp();
     else showAuthStep('choice');
+        // If the server is slow, let the user see the login screen after 5 seconds anyway
+setTimeout(() => {
+    const loader = document.getElementById('megaLoader');
+    if (loader && loader.style.opacity !== '0') {
+        updateMegaLoader(100, "Proceeding to Login");
+    }
+}, 5000);
             </script>
     <!-- IMAGE ZOOM MODAL -->
 <div id="imageZoomModal" class="hidden fixed inset-0 z-[300] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300" onclick="closeZoom()">
