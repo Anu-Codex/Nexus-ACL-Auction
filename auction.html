@@ -250,7 +250,10 @@ body {
             <!-- STEP 3: SPECIAL LOGIN -->
             <div id="auth_special" class="hidden space-y-4">
                 <h2 id="special_title" class="text-2xl font-bold text-white uppercase">Authorized Login</h2>
-                <input type="email" id="spec_email" placeholder="Official Email" class="w-full bg-gray-900 border border-white/10 p-4 rounded-2xl text-white">
+                <input type="email" id="spec_email" 
+       oninput="this.value = this.value.toLowerCase()" 
+       placeholder="Official Email" 
+       class="w-full bg-gray-900 border border-white/10 p-4 rounded-2xl text-white">
                 <input type="password" id="spec_pass" placeholder="Password" class="w-full bg-gray-900 border border-white/10 p-4 rounded-2xl text-white">
                 <button onclick="handleSpecialLogin()" class="w-full ef-gradient text-black font-black py-4 rounded-2xl uppercase">Verify Identity</button>
                 <button onclick="showAuthStep('choice')" class="text-gray-500 text-sm uppercase">Back</button>
