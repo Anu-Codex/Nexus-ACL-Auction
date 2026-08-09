@@ -227,6 +227,22 @@ body {
     scroll-behavior: smooth;
     will-change: scroll-position;
 }
+        .flying-emoji {
+    position: absolute;
+    bottom: 20px;
+    right: 40px;
+    pointer-events: none;
+    z-index: 100;
+    font-size: 28px; /* Slightly larger for impact */
+    animation: flyUp 2.5s cubic-bezier(0.1, 0.7, 1.0, 0.1) forwards;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+}
+
+@keyframes flyUp {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    10% { transform: translateY(-10px) scale(1.5); opacity: 1; }
+    100% { transform: translateY(-400px) translateX(var(--random-x)) rotate(15deg); opacity: 0; }
+}
     </style>
 </head>
 <body class="min-h-screen">
@@ -410,15 +426,43 @@ body {
                         </div>
                     </div>
 
-                    <div class="premium-glass rounded-[2rem] border border-white/5 h-[500px] flex flex-col overflow-hidden mt-8">
+                    <div class="premium-glass rounded-[2rem] border border-white/5 h-[500px] flex flex-col overflow-hidden mt-8 relative">
     <!-- Chat Header -->
     <div class="p-6 border-b border-white/5 bg-white/5 flex justify-between items-center">
         <span class="font-black text-xs uppercase tracking-widest flex items-center gap-2">
             <i class="fa-solid fa-comments text-cyan-400"></i> Communications
         </span>
     </div>
-                                          <!-- Chat Box Messages Area -->
-    <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+
+    <!-- MAIN CHAT AREA WITH SIDEBAR -->
+    <div class="flex flex-1 overflow-hidden relative">
+        <!-- Chat Box Messages -->
+        <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4 pr-16"></div>
+
+        <!-- REACTION SIDEBAR -->
+<div class="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col gap-3 p-2 bg-black/40 backdrop-blur-md rounded-full border border-white/10 z-10">
+    <!-- Primary Emojis -->
+    <button onclick="sendReaction('🔥')" class="hover:scale-125 transition text-xl">🔥</button>
+    <button onclick="sendReaction('👏')" class="hover:scale-125 transition text-xl">👏</button>
+    <button onclick="sendReaction('😂')" class="hover:scale-125 transition text-xl">😂</button>
+    <button onclick="sendReaction('❤️')" class="hover:scale-125 transition text-xl">❤️</button>
+    <button onclick="sendReaction('😮')" class="hover:scale-125 transition text-xl">😮</button>
+    
+    <!-- Unrestricted Plus Button -->
+    <div class="relative">
+        <button onclick="openEmojiPicker()" class="w-8 h-8 flex items-center justify-center bg-cyan-500/20 rounded-full text-cyan-400 text-sm hover:bg-cyan-500 hover:text-black transition">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+        <!-- This hidden input triggers the native emoji keyboard -->
+        <input type="text" id="nativeEmojiTrigger"
+       autocomplete="off" 
+       autocorrect="off" 
+       spellcheck="false"
+       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-none" 
+       oninput="handleNativeEmoji(this)">
+    </div>
+</div>
+        </div>
 
     <!-- Chat Input (Visible to All) -->
     <div id="chatInputContainer" class="p-4 bg-black/40 border-t border-white/5">
@@ -1640,6 +1684,50 @@ socket.on('initialData', (data) => {
     // START THE ASSET CHECK HERE
     checkAssets();
 });
+        
+        // 1. Opens the device's native keyboard
+function openEmojiPicker() {
+    const input = document.getElementById('nativeEmojiTrigger');
+    input.focus();
+    input.click(); // Forces mobile devices to show keyboard
+}
+
+// 2. Catches whatever the user typed/picked and sends it
+function handleNativeEmoji(input) {
+    const char = input.value.trim();
+    if (char) {
+        // Emojis can be multi-character, so we take the full string
+        sendReaction(char);
+        
+        // Reset the input immediately so they can send another one
+        input.value = '';
+        
+        // Optional: blur input after a short delay on mobile to hide keyboard
+        // setTimeout(() => input.blur(), 100); 
+    }
+}
+
+// 3. The existing Reaction send/receive logic (Keep this from before)
+function sendReaction(emoji) {
+    socket.emit('sendReaction', emoji);
+}
+
+socket.on('newReaction', (emoji) => {
+    renderFlyingEmoji(emoji);
+});
+
+function renderFlyingEmoji(emoji) {
+    const chatContainer = document.getElementById('chatBox').parentElement;
+    const el = document.createElement('div');
+    el.className = 'flying-emoji';
+    el.innerText = emoji;
+    
+    const randomX = (Math.random() * 120 - 60) + "px";
+    el.style.setProperty('--random-x', randomX);
+    
+    chatContainer.appendChild(el);
+    setTimeout(() => el.remove(), 2000);
+}
 
     function generatePDF() {
         const { jsPDF } = window.jspdf; const doc = new jsPDF();
