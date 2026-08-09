@@ -474,6 +474,51 @@ body {
         </div>
     </div>
 </div> <!-- Closes the Chat Premium Glass container -->
+                    <!-- NEW: SEPARATE PUBLIC CHAT BOX WITH REACTIONS -->
+<div class="premium-glass rounded-[2rem] border border-orange-500/10 h-[450px] flex flex-col overflow-hidden mt-8 relative shadow-[0_0_30px_rgba(249,115,22,0.05)]">
+    <!-- Header -->
+    <div class="p-6 border-b border-white/5 bg-orange-500/5 flex justify-between items-center">
+        <span class="font-black text-xs uppercase tracking-widest flex items-center gap-2 text-orange-400">
+            <i class="fa-solid fa-earth-americas"></i> Public Arena <span class="text-[8px] opacity-50 ml-2 font-normal">(Live Reactions Enabled)</span>
+        </span>
+    </div>
+
+    <!-- MAIN AREA -->
+    <div class="flex flex-1 overflow-hidden relative">
+        <!-- Public Chat Messages Area -->
+        <div id="pubChatBox" class="flex-1 overflow-y-auto p-6 space-y-4 pr-16">
+            <p class="text-[9px] text-center text-gray-600 uppercase tracking-[0.3em] italic py-4">Entrance to Public Feed.</p>
+        </div>
+
+        <!-- PUBLIC REACTION SIDEBAR -->
+        <div class="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col gap-3 p-2 bg-black/40 backdrop-blur-md rounded-full border border-white/10 z-10">
+            <button onclick="sendPubReaction('🔥')" class="hover:scale-125 transition text-xl">🔥</button>
+            <button onclick="sendPubReaction('👏')" class="hover:scale-125 transition text-xl">👏</button>
+            <button onclick="sendPubReaction('😂')" class="hover:scale-125 transition text-xl">😂</button>
+            <button onclick="sendPubReaction('❤️')" class="hover:scale-125 transition text-xl">❤️</button>
+            
+            <!-- Unrestricted Plus Button for Public -->
+            <div class="relative">
+                <button onclick="openPubEmojiPicker()" class="w-8 h-8 flex items-center justify-center bg-orange-500/20 rounded-full text-orange-400 text-sm hover:bg-orange-500 hover:text-black transition">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <input type="text" id="pubEmojiTrigger" 
+                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-none" 
+                       oninput="handlePubNativeEmoji(this)">
+            </div>
+        </div>
+    </div>
+
+    <!-- Public Chat Input -->
+    <div class="p-4 bg-black/40 border-t border-white/5">
+        <div class="flex gap-3 bg-gray-800/40 p-2 rounded-[1.5rem] border border-white/5">
+            <input id="pubInput" type="text" placeholder="Type public message..." class="flex-1 bg-transparent p-2 outline-none text-white text-sm" onkeypress="if(event.key==='Enter') sendPubChat()">
+            <button onclick="sendPubChat()" class="bg-orange-500 text-white w-10 h-10 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
 
                     <!-- NEXUS COMMAND CENTER (STATISTICS) -->
 <div class="space-y-4 mb-8">
@@ -1795,6 +1840,42 @@ function renderFlyingEmoji(emoji) {
     el.style.setProperty('--random-x', randomX);
     
     chatContainer.appendChild(el);
+    setTimeout(() => el.remove(), 2000);
+}
+        // --- PUBLIC ARENA REACTION LOGIC ---
+
+function sendPubReaction(emoji) {
+    socket.emit('public_reaction_send', emoji);
+}
+
+function openPubEmojiPicker() {
+    document.getElementById('pubEmojiTrigger').focus();
+}
+
+function handlePubNativeEmoji(input) {
+    if (input.value.trim()) {
+        sendPubReaction(input.value.trim());
+        input.value = '';
+    }
+}
+
+// Receiver for Public Reactions
+socket.on('public_reaction_receive', (emoji) => {
+    renderPubFlyingEmoji(emoji);
+});
+
+function renderPubFlyingEmoji(emoji) {
+    const container = document.getElementById('pubChatBox');
+    const el = document.createElement('div');
+    el.className = 'flying-emoji'; // Reuses your existing CSS animation
+    el.innerText = emoji;
+    
+    // Position it specifically over the public box
+    const randomX = (Math.random() * 100 - 50) + "px";
+    el.style.setProperty('--random-x', randomX);
+    el.style.right = "40px"; 
+    
+    container.appendChild(el);
     setTimeout(() => el.remove(), 2000);
 }
 
