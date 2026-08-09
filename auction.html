@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;700&display=swap');
@@ -1657,6 +1658,74 @@ setTimeout(() => {
         updateMegaLoader(100, "Proceeding to Login");
     }
 }, 5000);
+        // --- SOLD CELEBRATION LOGIC ---
+socket.on('celebrateSold', (data) => {
+    const overlay = document.getElementById('soldOverlay');
+    const card = overlay.querySelector('.relative');
+    
+    // 1. Populate Card Data
+    document.getElementById('soldPlayerImg').src = data.player.imageUrl || 'https://via.placeholder.com/200';
+    document.getElementById('soldPlayerName').innerText = data.player.name;
+    document.getElementById('soldPlayerStrength').innerText = "★ " + data.player.strength;
+    document.getElementById('soldPlayerTier').innerText = data.player.cardType;
+    document.getElementById('soldToTeam').innerText = data.teamName;
+    document.getElementById('soldPrice').innerText = data.price + " M";
+
+    // 2. Show Overlay
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Stop scroll
+
+    // 3. Trigger Fireworks (Massive)
+    triggerFireworks();
+
+    // 4. Card Animation
+    setTimeout(() => {
+        card.style.transform = "scale(1) rotate(0deg)";
+    }, 100);
+
+    // 5. Play SFX
+    const sfx = document.getElementById('soldSfx');
+    if(sfx) sfx.play();
+});
+
+function triggerFireworks() {
+    const duration = 5 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 900 };
+
+    function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+            return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        // Fireworks coming from sides
+        confetti(Object.assign({}, defaults, { 
+            particleCount, 
+            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } 
+        }));
+        confetti(Object.assign({}, defaults, { 
+            particleCount, 
+            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } 
+        }));
+    }, 250);
+}
+
+function closeSoldCard() {
+    const overlay = document.getElementById('soldOverlay');
+    overlay.classList.add('opacity-0');
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+        overlay.classList.remove('opacity-0');
+        document.body.style.overflow = 'auto';
+    }, 500);
+}
             </script>
     <!-- IMAGE ZOOM MODAL -->
 <div id="imageZoomModal" class="hidden fixed inset-0 z-[300] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300" onclick="closeZoom()">
@@ -1700,6 +1769,49 @@ setTimeout(() => {
     <div class="w-full mt-10 pb-10 flex flex-col items-center gap-4">
         <div id="slideshowDots" class="flex gap-2"></div>
         <p class="text-gray-600 font-bold text-[8px] uppercase tracking-[0.3em]">Nexus Legends FC | Unsold Gallery</p>
+    </div>
+</div>
+    <!-- SOLD FLASHCARD OVERLAY -->
+<div id="soldOverlay" class="hidden fixed inset-0 z-[800] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-500" onclick="closeSoldCard()">
+    
+    <!-- THE PORTRAIT CARD -->
+    <div class="relative w-full max-w-[320px] aspect-[2/3] bg-gradient-to-b from-yellow-400 via-yellow-600 to-black rounded-[2.5rem] p-1 shadow-[0_0_80px_rgba(250,204,21,0.4)] transform transition-all duration-700 scale-90" onclick="event.stopPropagation()">
+        
+        <!-- Inner Border & Content -->
+        <div class="w-full h-full bg-[#0a0f16] rounded-[2.3rem] overflow-hidden flex flex-col items-center relative">
+            
+            <!-- Header Status -->
+            <div class="mt-6 bg-red-600 text-white px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.3em] shadow-lg animate-pulse">
+                Sold Out
+            </div>
+
+            <!-- Player Image -->
+            <div class="mt-8 w-48 h-48 rounded-full border-4 border-yellow-500/50 p-1 shadow-2xl">
+                <img id="soldPlayerImg" src="" class="w-full h-full object-cover rounded-full bg-gray-900">
+            </div>
+
+            <!-- Player Name -->
+            <h2 id="soldPlayerName" class="mt-6 text-3xl font-black text-white uppercase italic tracking-tighter text-center px-4"></h2>
+            
+            <!-- Details Row -->
+            <div class="flex gap-4 mt-2">
+                <span id="soldPlayerStrength" class="text-yellow-400 font-black text-lg"></span>
+                <div class="w-px h-6 bg-white/10"></div>
+                <span id="soldPlayerTier" class="text-cyan-400 font-bold uppercase text-xs self-center"></span>
+            </div>
+
+            <!-- SOLD TO SECTION -->
+            <div class="absolute bottom-0 w-full bg-gradient-to-t from-yellow-500 to-yellow-600 p-6 text-center">
+                <p class="text-black font-black text-[10px] uppercase tracking-widest opacity-80">New Franchise Signee</p>
+                <h3 id="soldToTeam" class="text-2xl font-black text-black uppercase italic leading-tight"></h3>
+                <div class="mt-1 bg-black/20 rounded-lg py-1">
+                    <p id="soldPrice" class="text-white font-black text-xl"></p>
+                </div>
+            </div>
+
+            <!-- Decorative Elements -->
+            <div class="absolute top-4 left-4 opacity-20 text-yellow-500 text-4xl"><i class="fa-solid fa-crown"></i></div>
+        </div>
     </div>
 </div>
 </body>
