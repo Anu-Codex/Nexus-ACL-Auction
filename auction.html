@@ -564,8 +564,8 @@ body {
     }
 
     function guestAccess() {
-
-showAuthStep('guest');
+    // Instead of showing a step, directly tell the server to let us in
+    socket.emit('guestSignIn', { password: "" }); 
     }
 
 
