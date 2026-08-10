@@ -2766,6 +2766,34 @@ function setupGhostWatch() {
         }
     }
 }
+        function updateStatsUI(stats) {
+    if (!stats) return;
+
+    // Update Top Counters
+    const mapping = {
+        'statTotal': stats.total,
+        'statSold': stats.sold,
+        'statUnsold': stats.unsold,
+        'tierBT': stats.tiers.bigtime,
+        'tierEP': stats.tiers.epic,
+        'tierST': stats.tiers.showtime,
+        'tierHL': stats.tiers.highlight
+    };
+
+    for (let id in mapping) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = mapping[id] !== undefined ? mapping[id] : 0;
+    }
+
+    // Refresh the visuals
+    renderSquadGrid();
+    if (typeof renderScarcityMap === 'function') renderScarcityMap();
+}
+
+// Ensure the real-time listener uses the same helper
+socket.on('updateGlobalStats', (stats) => {
+    updateStatsUI(stats);
+});
 
 // Call this inside your startApp() function
                 
