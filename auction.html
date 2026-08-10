@@ -623,6 +623,9 @@ body {
         <div class="grid grid-cols-3 gap-2">
             <button onclick="sendBonus()" class="bg-cyan-500 text-black font-black py-3 rounded-xl text-[10px] uppercase hover:bg-cyan-400 transition-all">Inject</button>
             <button onclick="forceDeduct()" class="bg-red-600 text-white font-black py-3 rounded-xl text-[10px] uppercase hover:bg-red-500 transition-all">Deduct</button>
+            <button onclick="triggerReduceSquad()" class="bg-orange-500 text-white font-black py-3 rounded-xl text-[10px] uppercase hover:bg-orange-400 transition-all shadow-lg shadow-orange-900/20">
+        Release Player
+            </button>
             <button onclick="triggerResetPurse()" class="bg-gray-700 text-gray-300 font-black py-3 rounded-xl text-[10px] uppercase hover:bg-white hover:text-black transition-all">Reset</button>
         </div>
     </div>
@@ -1262,6 +1265,21 @@ function handleAddTeam() {
     document.getElementById('tName').value = '';
     document.getElementById('tBudget').value = '';
 }
+        function triggerReduceSquad() {
+    if (user.role !== 'admin') return;
+    
+    const team = document.getElementById('bonusTeamSelect').value;
+    const count = Number(document.getElementById('bonusAmount').value);
+    
+    if (!team || !count || count <= 0) {
+        return alert("Select a team and type how many players to remove (e.g., 1) in the Amt box.");
+    }
+
+    if (confirm(`SQUAD REDUCTION: Remove ${count} player(s) from ${team} and make them Available again?`)) {
+        socket.emit('reduceSquadCount', { teamName: team, count: count });
+        document.getElementById('bonusAmount').value = ''; // Clear input
+    }
+        }
         // --- DYNAMIC PLAYLIST SYSTEM ---
 
 // 1. YOUR SONG LINKS
