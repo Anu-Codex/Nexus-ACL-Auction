@@ -1192,16 +1192,14 @@ socket.on('updateAuction', (state) => {
 
     function renderAuction(state) {
     const container = document.getElementById('auctionDisplay');
-    
-    // 1. Atmosphere Check
-    if (state && state.activePlayerId) {
-        setAtmosphere(state.activePlayerId.cardType);
-    } else {
-        setAtmosphere(null);
-    }
+    if (!container) return;
 
-    // 2. Nomination Check
-    if (!container || !state || !state.activePlayerId) {
+    // 1. Manage Atmosphere
+    if (state && state.activePlayerId) {
+        if (typeof setAtmosphere === 'function') setAtmosphere(state.activePlayerId.cardType);
+    } else {
+        if (typeof setAtmosphere === 'function') setAtmosphere(null);
+        // Show Nomination screen if no active player
         container.innerHTML = `
             <div class="text-center py-20 flex flex-col items-center justify-center animate-in fade-in duration-700">
                 <div class="auction-spinner"></div>
@@ -1216,7 +1214,26 @@ socket.on('updateAuction', (state) => {
     const p = state.activePlayerId;
     const isHighest = user && (user.name === state.highestBidder);
     const hasSkipped = user && state.skippedTeams && state.skippedTeams.includes(user.name);
-    
+
+    // 2. Prepare Mystery Pack Content
+    const playerCardContent = state.isHidden ? `
+        <div class="mystery-vault w-64 h-80 rounded-[2rem] flex items-center justify-center shadow-2xl">
+            <span class="mystery-glitch">?</span>
+        </div>` : `
+        <div class="premium-card-neon w-64 h-80 rounded-[2rem] p-6 flex flex-col items-center justify-between shadow-2xl">
+            <span class="text-4xl font-black text-cyan-400">Str ${p.strength}</span>
+            <div class="text-center"><h2 class="text-3xl player-name-prominent uppercase italic">${p.name}</h2></div>
+            <div class="bg-cyan-400 text-black px-4 py-1.5 rounded-full font-black text-[10px] uppercase">${p.cardType}</div>
+        </div>`;
+
+    const playerImageContent = state.isHidden ? `
+        <div class="w-full h-full bg-gray-900 flex flex-col items-center justify-center gap-4">
+            <i class="fa-solid fa-lock text-6xl text-cyan-500/20 animate-pulse"></i>
+            <p class="text-cyan-500/40 font-black tracking-widest text-[10px] uppercase">Identity Classified</p>
+        </div>` : `
+        <img src="${p.imageUrl}" onclick="openZoom('${p.imageUrl}')" class="w-full h-full object-cover cursor-zoom-in" title="Click to Zoom">`;
+
+    // 3. Prepare Final Call UI
     let finalCallUI = "";
     if (state.isFinalCall) {
         finalCallUI = `
@@ -1228,29 +1245,11 @@ socket.on('updateAuction', (state) => {
             </div>`;
     }
 
-    // Logic for Mystery Card
-    const playerCardContent = state.isHidden ? `
-        <div class="mystery-vault w-64 h-80 rounded-[2rem] flex items-center justify-center shadow-2xl">
-            <span class="mystery-glitch">?</span>
-        </div>` : `
-        <div class="premium-card-neon w-64 h-80 rounded-[2rem] p-6 flex flex-col items-center justify-between shadow-2xl reveal-flash">
-            <span class="text-4xl font-black text-cyan-400">Str ${p.strength}</span>
-            <div class="text-center"><h2 class="text-3xl player-name-prominent uppercase italic">${p.name}</h2></div>
-            <div class="bg-cyan-400 text-black px-4 py-1.5 rounded-full font-black text-[10px] uppercase">${p.cardType}</div>
-        </div>`;
-
-    // Logic for Mystery Image
-    const playerImageContent = state.isHidden ? `
-        <div class="w-full h-full bg-gray-900 flex flex-col items-center justify-center gap-4">
-            <i class="fa-solid fa-lock text-6xl text-cyan-500/20 animate-pulse"></i>
-            <p class="text-cyan-500/40 font-black tracking-widest text-[10px] uppercase">Identity Classified</p>
-        </div>` : `
-        <img src="${p.imageUrl}" onclick="openZoom('${p.imageUrl}')" class="w-full h-full object-cover cursor-zoom-in reveal-flash" title="Click to Zoom">`;
-
-    // 3. Render Main UI
+    // 4. Injected HTML
     container.innerHTML = `
         <div class="w-full flex flex-col items-center animate-in zoom-in duration-500 py-6">
             ${finalCallUI}
+            
             ${!state.isFinalCall ? `
             <div class="w-full max-w-3xl bg-gray-900 h-3 rounded-full mb-12 overflow-hidden border border-white/10">
                 <div class="h-full bg-red-600 shadow-[0_0_20px_#ff0000] transition-all duration-1000" style="width: ${(state.timeLeft/60)*100}%"></div>
@@ -1258,9 +1257,11 @@ socket.on('updateAuction', (state) => {
 
             <div class="flex flex-col lg:flex-row items-center gap-10 w-full justify-center">
                 ${playerCardContent}
+                
                 <div class="w-full max-w-md aspect-video rounded-3xl overflow-hidden border-2 border-white/10 shadow-2xl bg-black flex items-center justify-center">
                     ${playerImageContent}
                 </div>
+
                 <div class="flex flex-col items-center lg:items-start gap-6">
                     <div class="bid-box-prominent text-center lg:text-left min-w-[300px]">
                         <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Current evaluation</p>
@@ -1292,7 +1293,10 @@ socket.on('updateAuction', (state) => {
                 <button onclick="socket.emit('cancelAuction')" class="bg-gray-800 text-gray-400 px-8 py-4 rounded-2xl font-black text-sm">CANCEL</button>
             </div>` : ''}
         </div>`;
-}
+    
+    // Feature 5 Update
+    if (typeof updateTicker === 'function') updateTicker();
+    }
         
     function bid(inc) { if(!user || user.role !== 'captain') return; socket.emit('placeBid', { teamName: user.name, increment: inc }); }
     function skip() { if(!user || user.role !== 'captain') return; if(confirm("Skip this round?")) socket.emit('skipRound', { teamName: user.name }); }
