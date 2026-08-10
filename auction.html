@@ -439,11 +439,6 @@ body {
 
     <!-- DASHBOARD -->
     <div id="dashboard" class="hidden">
-        <div class="ticker-wrap">
-    <div id="newsTicker" class="ticker-move text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400">
-        Welcome to Nexus Legends Auction Tour 2026-27 • Database Synchronized • Awaiting Nomination...
-    </div>
-        </div>
         <nav class="premium-glass sticky top-0 z-50 px-8 py-5 flex justify-between items-center border-b border-white/5">
             <div class="flex items-center gap-3">
                 <div class="bg-cyan-500/10 p-2 rounded-lg border border-cyan-500/20">
@@ -468,6 +463,11 @@ body {
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="ticker-wrap">
+    <div id="newsTicker" class="ticker-move text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400">
+        Welcome to Nexus Legends Auction Tour 2026-27 • Database Synchronized • Awaiting Nomination...
+    </div>
+                </div>
                 <!-- Left: Live Auction & Roster (KEPT SAME) -->
                 <div class="lg:col-span-8 space-y-8">
                     <div class="premium-glass rounded-[2.5rem] p-8 relative overflow-hidden min-h-[450px] border border-white/5 flex flex-col items-center justify-center">
@@ -626,6 +626,28 @@ body {
         <!-- Colorful Cards Injected Here -->
     </div>
 </div>
+    <!-- Right: Purses & Chat (KEPT SAME) -->
+                <div class="lg:col-span-4 space-y-8">
+                    <div class="premium-glass rounded-[2rem] border border-white/5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-cyan-900/40 to-transparent p-6 border-b border-white/5 flex justify-between items-center"><h3 class="font-bold uppercase tracking-widest">Franchise Purses</h3><i class="fa-solid fa-vault text-yellow-400"></i></div>
+                        <div id="budgetList" class="p-3 space-y-2 max-h-[400px] overflow-y-auto"></div>
+                        <div id="adminBonusPanel" class="hidden p-6 bg-black/40 border-t border-white/5 space-y-4">
+    <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1">Select Franchise to Adjust</label>
+    <select id="bonusTeamSelect" class="w-full bg-gray-900 border border-white/10 p-3 rounded-xl text-xs text-white outline-none focus:border-cyan-500/50"></select>
+    
+    <div class="flex flex-col gap-2">
+        <input id="bonusAmount" type="number" placeholder="Enter Amount (M)" class="w-full bg-gray-900 border border-white/10 p-3 rounded-xl text-xs text-white">
+        
+        <div class="grid grid-cols-3 gap-2">
+            <button onclick="sendBonus()" class="bg-cyan-500 text-black font-black py-3 rounded-xl text-[10px] uppercase hover:bg-cyan-400 transition-all">Inject</button>
+            <button onclick="forceDeduct()" class="bg-red-600 text-white font-black py-3 rounded-xl text-[10px] uppercase hover:bg-red-500 transition-all">Deduct</button>
+            <button onclick="triggerReduceSquad()" class="bg-orange-500 text-white font-black py-3 rounded-xl text-[10px] uppercase hover:bg-orange-400 transition-all shadow-lg shadow-orange-900/20">
+        Release Player
+            </button>
+            <button onclick="triggerResetPurse()" class="bg-gray-700 text-gray-300 font-black py-3 rounded-xl text-[10px] uppercase hover:bg-white hover:text-black transition-all">Reset</button>
+        </div>
+    </div>
+                        </div>
 
                     <div class="premium-glass rounded-[2rem] overflow-hidden border border-white/5">
                         <div class="bg-white/5 p-6 border-b border-white/5 flex justify-between items-center">
@@ -675,30 +697,6 @@ body {
                         <button onclick="addPlayer()" class="mt-6 w-full ef-gradient text-black font-black py-4 rounded-2xl btn-premium uppercase">Deploy to Roster</button>
                     </div>
                 </div>
-                
-
-                <!-- Right: Purses & Chat (KEPT SAME) -->
-                <div class="lg:col-span-4 space-y-8">
-                    <div class="premium-glass rounded-[2rem] border border-white/5 overflow-hidden">
-                        <div class="bg-gradient-to-r from-cyan-900/40 to-transparent p-6 border-b border-white/5 flex justify-between items-center"><h3 class="font-bold uppercase tracking-widest">Franchise Purses</h3><i class="fa-solid fa-vault text-yellow-400"></i></div>
-                        <div id="budgetList" class="p-3 space-y-2 max-h-[400px] overflow-y-auto"></div>
-                        <div id="adminBonusPanel" class="hidden p-6 bg-black/40 border-t border-white/5 space-y-4">
-    <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1">Select Franchise to Adjust</label>
-    <select id="bonusTeamSelect" class="w-full bg-gray-900 border border-white/10 p-3 rounded-xl text-xs text-white outline-none focus:border-cyan-500/50"></select>
-    
-    <div class="flex flex-col gap-2">
-        <input id="bonusAmount" type="number" placeholder="Enter Amount (M)" class="w-full bg-gray-900 border border-white/10 p-3 rounded-xl text-xs text-white">
-        
-        <div class="grid grid-cols-3 gap-2">
-            <button onclick="sendBonus()" class="bg-cyan-500 text-black font-black py-3 rounded-xl text-[10px] uppercase hover:bg-cyan-400 transition-all">Inject</button>
-            <button onclick="forceDeduct()" class="bg-red-600 text-white font-black py-3 rounded-xl text-[10px] uppercase hover:bg-red-500 transition-all">Deduct</button>
-            <button onclick="triggerReduceSquad()" class="bg-orange-500 text-white font-black py-3 rounded-xl text-[10px] uppercase hover:bg-orange-400 transition-all shadow-lg shadow-orange-900/20">
-        Release Player
-            </button>
-            <button onclick="triggerResetPurse()" class="bg-gray-700 text-gray-300 font-black py-3 rounded-xl text-[10px] uppercase hover:bg-white hover:text-black transition-all">Reset</button>
-        </div>
-    </div>
-                        </div>
                     <!-- ADMIN LOGIN MANAGEMENT (Visible to Admin Only) -->
 <div id="adminUserManagement" class="hidden premium-glass rounded-[2rem] p-8 border border-cyan-500/20 mt-8">
     <h3 class="text-xl font-bold mb-6 text-white uppercase tracking-widest flex items-center gap-3">
