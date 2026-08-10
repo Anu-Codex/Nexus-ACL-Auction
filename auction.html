@@ -391,6 +391,25 @@ body {
 /* Flashing FOMO effect for last 3 players */
 .fomo-alert { animation: dot-panic 1s infinite; }
 @keyframes dot-panic { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        #ghostWatchContainer {
+    transition: all 0.5s ease;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
+}
+
+.ghost-active {
+    background: rgba(168, 85, 247, 0.2) !important;
+    border-color: rgba(168, 85, 247, 0.6) !important;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3) !important;
+}
+
+#ghostWatchContainer i {
+    animation: eye-scan 2s infinite;
+}
+
+@keyframes eye-scan {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.5; }
+}
 
     </style>
 </head>
@@ -1101,6 +1120,7 @@ function startApp() {
     document.getElementById('dashboard').classList.remove('hidden');
     document.getElementById('userName').innerText = user.name;
     document.getElementById('userRole').innerText = user.role;
+    setupGhostWatch();
     const chatInputArea = document.getElementById('chatInputContainer');
     if (chatInputArea) {
         // Only show the input bar if user is NOT a guest
@@ -1362,6 +1382,10 @@ socket.on('updateAuction', (state) => {
                     <div class="timer-prominent flex items-center gap-3">
                         <i class="fa-solid fa-clock"></i><span>ENDS IN ${state.timeLeft}S</span>
                     </div>
+    <div id="ghostWatchContainer" class="flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-500/30 rounded-full animate-pulse">
+        <i class="fa-solid fa-eye text-purple-400 text-xs"></i>
+        <span id="ghostCount" class="text-[9px] font-black text-purple-300 uppercase tracking-widest">0 Captains Hovering</span>
+    </div>
                 </div>
             </div>
 
@@ -2657,6 +2681,45 @@ function getSmartBudgetAdvice(team) {
         if(activeMode !== 'normal') switchTrack('normal');
     }
         }
+        // 1. RECEIVER: Update the number on screen for everyone
+socket.on('ghostWatchCount', (count) => {
+    const el = document.getElementById('ghostCount');
+    const container = document.getElementById('ghostWatchContainer');
+    if (el) {
+        el.innerText = `${count} ${count === 1 ? 'Captain' : 'Captains'} Hovering`;
+        
+        // Change appearance if more than 2 people are hovering
+        if (count > 2) container.classList.add('ghost-active');
+        else container.classList.remove('ghost-active');
+    }
+});
+
+// 2. EMITTER: For Captains only
+function setupGhostWatch() {
+    if (user && user.role === 'captain') {
+        const dashboard = document.getElementById('dashboard');
+        
+        // Detect if the tab is active
+        document.addEventListener('visibilitychange', () => {
+            socket.emit('updateFocus', document.visibilityState === 'visible');
+        });
+
+        // Detect if they are "interacting" with the auction block
+        const auctionArea = document.getElementById('auctionDisplay');
+        if (auctionArea) {
+            auctionArea.addEventListener('mouseenter', () => socket.emit('updateFocus', true));
+            auctionArea.addEventListener('mouseleave', () => socket.emit('updateFocus', false));
+            
+            // Mobile support
+            auctionArea.addEventListener('touchstart', () => socket.emit('updateFocus', true));
+            auctionArea.addEventListener('touchend', () => {
+                setTimeout(() => socket.emit('updateFocus', false), 5000); // 5 sec delay for mobile
+            });
+        }
+    }
+}
+
+// Call this inside your startApp() function
                 
             </script>
     <!-- IMAGE ZOOM MODAL -->
