@@ -1066,6 +1066,7 @@ socket.on('updateAuction', (state) => {
         return `
             <div class="p-4 rounded-2xl bg-white/5 border ${isFull ? 'border-red-500/50' : 'border-white/5'} transition-all group mb-2">
                 <div class="flex justify-between items-center mb-1">
+                ${t.logoUrl ? `<img src="${t.logoUrl}" class="w-5 h-5 rounded-full object-contain bg-black/40 border border-white/10">` : `<i class="fa-solid fa-shield-halved text-[10px] opacity-20"></i>`}
                     <span class="text-sm font-black uppercase tracking-widest text-gray-400">${t.name}</span>
                     <span class="text-cyan-400 font-black text-lg">${t.budget}M</span>
                 </div>
@@ -2272,6 +2273,7 @@ function closeSoldCard() {
         return `
             <div onclick="openSquadModal('${t.name}')" class="team-stat-card ${themeClass} flex flex-col justify-between cursor-pointer hover:scale-105 transition-transform">
                 <div class="flex justify-between items-start mb-2">
+                ${t.logoUrl ? `<img src="${t.logoUrl}" class="w-5 h-5 rounded-full object-contain bg-black/40 border border-white/10">` : `<i class="fa-solid fa-shield-halved text-[10px] opacity-20"></i>`}
                     <span class="text-[10px] font-black uppercase tracking-tighter text-gray-300 truncate w-2/3">${t.name}</span>
                     <i class="fa-solid fa-shield-halved text-[10px] opacity-20"></i>
                 </div>
