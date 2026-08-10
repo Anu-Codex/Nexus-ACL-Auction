@@ -965,35 +965,43 @@ body {
     let tempEmail = "";
     let authType = "";
     let priceChart;
-function initPriceChart() {
+// Update initPriceChart to accept data
+function initPriceChart(historyData = []) {
     const ctx = document.getElementById('priceChart').getContext('2d');
+    
+    // Extract names and prices from database history
+    const labels = historyData.map(h => h.playerName);
+    const dataPoints = historyData.map(h => h.price);
+
+    if(priceChart) priceChart.destroy(); // Prevent duplicate charts
+
     priceChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: [], // Player Names
+            labels: labels,
             datasets: [{
-                label: 'Price (M)',
-                data: [],
+                data: dataPoints,
                 borderColor: '#00e5ff',
-                backgroundColor: 'rgba(0, 229, 255, 0.05)',
+                backgroundColor: 'rgba(0, 229, 255, 0.1)',
                 borderWidth: 3,
                 fill: true,
-                tension: 0.4, // This makes the line curved
-                pointRadius: 4,
-                pointBackgroundColor: '#fff'
+                tension: 0.4,
+                pointRadius: 4
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', font: { size: 8 } } },
-                x: { display: false } // Hide X labels for cleaner look
+                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+                x: { display: false }
             },
             plugins: { legend: { display: false } }
         }
     });
 }
+
+// Update the initialData listener
 
 
     // --- AUTH UI LOGIC (RESTORING MISSING FUNCTIONS) ---
@@ -1154,7 +1162,13 @@ function startApp() {
         renderAuction(data.state);
         if(data.chats) { 
             document.getElementById('chatBox').innerHTML = ''; 
-            data.chats.forEach(addChatMessage); 
+            data.chats.forEach(addChatMessage);
+        }
+        if (data.history && data.history.length > 0) {
+        console.log("📈 Restoring graph from database history...");
+        initPriceChart(data.history); 
+    } else {
+        initPriceChart([]); // Initialize empty if no history
         }
     });
 
@@ -2381,6 +2395,40 @@ function renderPubFlyingEmoji(emoji) {
         },
         margin: { left: 14, right: 14 }
     });
+        // --- PDF SEGMENT: MARKET GRAPH ---
+const chartCanvas = document.getElementById('priceChart');
+if (chartCanvas) {
+    // Converts the live Chart.js canvas into a high-res image
+    const chartImg = chartCanvas.toDataURL('image/png', 1.0);
+    doc.setTextColor(...colors.yellow);
+    doc.setFontSize(12);
+    doc.text("MARKET PRICE VOLATILITY INDEX", 15, 80);
+    // Position: x=15, y=85, width=180, height=45
+    doc.addImage(chartImg, 'PNG', 15, 85, 180, 45);
+}
+        // --- PDF SEGMENT: FRANCHISE SQUAD DEPTH ---
+doc.setTextColor(...colors.cyan);
+doc.setFontSize(12);
+doc.text("FRANCHISE RECRUITMENT SUMMARY", 15, 145);
+
+const franchiseData = currentTeams.map(t => {
+    const boughtCount = currentPlayers.filter(p => p.status === 'Sold' && p.soldTo.includes(t.name)).length;
+    return [
+        t.name.toUpperCase(), 
+        `${boughtCount} / ${t.maxCapacity}`, // Shows 3/8 as requested
+        `${t.budget} M`
+    ];
+});
+
+doc.autoTable({
+    startY: 150,
+    head: [['FRANCHISE IDENTITY', 'SQUAD DEPTH', 'REMAINING PURSE']],
+    body: franchiseData,
+    theme: 'grid',
+    headStyles: { fillColor: [0, 100, 120], textColor: [255, 255, 255] },
+    bodyStyles: { fillColor: [20, 25, 35], textColor: [230, 230, 230], fontSize: 9 },
+    columnStyles: { 1: { halign: 'center', fontStyle: 'bold' } }
+});
 
     // --- 6. FOOTER ---
     const pageCount = doc.internal.getNumberOfPages();
