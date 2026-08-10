@@ -1765,16 +1765,22 @@ socket.on('connect', () => {
 
 // 3. Update when initial data arrives (Update your existing initialData listener)
 socket.on('initialData', (data) => {
-    updateMegaLoader(85, "Synchronizing Data");
+    updateMegaLoader(70, "Data Received");
     
-    // Existing logic here...
     currentPlayers = data.players;
     currentTeams = data.teams;
     renderPlayers(data.players);
     renderTeams(data.teams);
     renderAuction(data.state);
+    if(data.stats) updateStatsUI(data.stats);
+    renderSquadGrid();
+    if(data.chats) { 
+        document.getElementById('chatBox').innerHTML = ''; 
+        data.chats.forEach(addChatMessage); 
+    }
     
-    // Finalizing
+    // START THE ASSET CHECK HERE
+    checkAssets();
     setTimeout(() => updateMegaLoader(100, "Ready for Action"), 500);
 });
 
@@ -1862,18 +1868,7 @@ function finishSync() {
 }
 
 // UPDATE: Modify your existing initialData listener to trigger the check
-socket.on('initialData', (data) => {
-    updateMegaLoader(70, "Data Received");
-    
-    currentPlayers = data.players;
-    currentTeams = data.teams;
-    renderPlayers(data.players);
-    renderTeams(data.teams);
-    renderAuction(data.state);
-    
-    // START THE ASSET CHECK HERE
-    checkAssets();
-});
+
         
         // 1. Opens the device's native keyboard
 function openEmojiPicker() {
