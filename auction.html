@@ -2192,56 +2192,58 @@ function closeSoldCard() {
     document.getElementById('tierHL').innerText = stats.tiers.highlight;
 
     // 2. Generate the Colorful Franchise Stat Cards
+    function renderSquadGrid() {
     const squadGrid = document.getElementById('statSquadGrid');
-    if (squadGrid && currentTeams.length > 0) {
-        squadGrid.innerHTML = currentTeams.map(t => {
-            // Calculate signings for this team
-            const boughtCount = currentPlayers.filter(p => 
-                p.status === 'Sold' && p.soldTo.includes(t.name)
-            ).length;
+    if (!squadGrid || currentTeams.length === 0) return;
 
-            const isFull = boughtCount >= t.maxCapacity;
-            const percent = (boughtCount / t.maxCapacity) * 100;
+    squadGrid.innerHTML = currentTeams.map(t => {
+        // Calculate signings
+        const boughtCount = currentPlayers.filter(p => 
+            p.status === 'Sold' && p.soldTo.includes(t.name)
+        ).length;
 
-            // Determine Theme Color based on progress
-            let themeClass = "card-cyan";
-            let accentColor = "text-cyan-400";
-            if (boughtCount >= 4) { themeClass = "card-gold"; accentColor = "text-yellow-400"; }
-            if (isFull) { themeClass = "card-full"; accentColor = "text-red-500"; }
+        const isFull = boughtCount >= t.maxCapacity;
+        const percent = (boughtCount / t.maxCapacity) * 100;
 
-            return `
-                <div class="team-stat-card ${themeClass} flex flex-col justify-between">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-[9px] font-black uppercase tracking-tighter text-gray-300 truncate w-2/3">${t.name}</span>
-                        <i class="fa-solid fa-shield-halved text-[9px] opacity-20"></i>
+        // Determine Theme Color
+        let themeClass = "card-cyan";
+        let accentColor = "text-cyan-400";
+        if (boughtCount >= 4) { themeClass = "card-gold"; accentColor = "text-yellow-400"; }
+        if (isFull) { themeClass = "card-full"; accentColor = "text-red-500"; }
+
+        return `
+            <div class="team-stat-card ${themeClass} flex flex-col justify-between">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[10px] font-black uppercase tracking-tighter text-gray-300 truncate w-2/3">${t.name}</span>
+                    <i class="fa-solid fa-shield-halved text-[10px] opacity-20"></i>
+                </div>
+                
+                <div class="flex items-end justify-between">
+                    <div class="squad-number">
+                        <span class="text-2xl font-black text-white leading-none">${boughtCount}</span>
+                        <span class="text-[10px] font-bold text-gray-500 uppercase">/${t.maxCapacity}</span>
                     </div>
                     
-                    <div class="flex items-end justify-between">
-                        <div class="squad-number">
-                            <span class="text-2xl font-black text-white leading-none">${boughtCount}</span>
-                            <span class="text-[9px] font-bold text-gray-500">/${t.maxCapacity}</span>
-                        </div>
-                        
-                        <!-- Circular progress indicator -->
-                        <div class="w-7 h-7 relative flex items-center justify-center">
-                            <svg class="w-full h-full transform -rotate-90">
-                                <circle cx="14" cy="14" r="12" stroke="rgba(255,255,255,0.05)" stroke-width="2" fill="transparent" />
-                                <circle cx="14" cy="14" r="12" stroke="currentColor" stroke-width="2" fill="transparent" 
-                                        class="${accentColor}"
-                                        stroke-dasharray="75" 
-                                        stroke-dashoffset="${75 - (75 * percent / 100)}" 
-                                        stroke-linecap="round" />
-                            </svg>
-                        </div>
+                    <!-- Circular mini progress indicator -->
+                    <div class="w-8 h-8 relative flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="16" cy="16" r="14" stroke="rgba(255,255,255,0.05)" stroke-width="3" fill="transparent" />
+                            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="3" fill="transparent" 
+                                    class="${accentColor}"
+                                    stroke-dasharray="88" 
+                                    stroke-dashoffset="${88 - (88 * percent / 100)}" 
+                                    stroke-linecap="round" />
+                        </svg>
                     </div>
+                </div>
 
-                    <div class="mt-2 text-[7px] font-black uppercase tracking-[0.2em] ${isFull ? 'text-red-500' : 'text-gray-600'}">
-                        ${isFull ? 'SQUAD COMPLETE' : 'Recruiting...'}
-                    </div>
-                </div>`;
-        }).join('');
+                <!-- Labels for Captains -->
+                <div class="mt-2 text-[7px] font-black uppercase tracking-[0.2em] ${isFull ? 'text-red-500' : 'text-gray-600'}">
+                    ${isFull ? 'SQUAD COMPLETE' : 'Recruiting...'}
+                </div>
+            </div>`;
+    }).join('');
     }
-        }
                 
             </script>
     <!-- IMAGE ZOOM MODAL -->
