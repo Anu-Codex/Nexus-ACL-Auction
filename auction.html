@@ -1151,7 +1151,6 @@ socket.on('updateAuction', (state) => {
                     <span class="text-sm font-black uppercase tracking-widest text-gray-400">${t.name}</span>
                     <span class="text-cyan-400 font-black text-lg">${t.budget}M</span>
                 </div>
-                <!-- SQUAD CAPACITY BAR -->
                 <div class="flex justify-between items-center text-[9px] uppercase font-bold">
                     <span class="${isFull ? 'text-red-500' : 'text-gray-600'}">Squad: ${count} / ${t.maxCapacity}</span>
                     <div class="flex-1 mx-3 bg-gray-900 h-1 rounded-full overflow-hidden">
@@ -1284,17 +1283,7 @@ socket.on('updateAuction', (state) => {
             </div>
         </div>`;
                     </div>
-                    <div class="flex flex-col items-center lg:items-start gap-6">
-                        <div class="bid-box-prominent text-center lg:text-left min-w-[300px]">
-                            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Current evaluation</p>
-                            <p class="text-7xl font-black text-white">${state.currentBid}<span class="text-2xl text-cyan-400 ml-2">M</span></p>
-                            <p class="text-2xl font-bold text-yellow-400 uppercase mt-4">${state.highestBidder || 'NO BIDS YET'}</p>
-                        </div>
-                        <div class="timer-prominent flex items-center gap-3">
-                            <i class="fa-solid fa-clock"></i><span>ENDS IN ${state.timeLeft}S</span>
-                        </div>
-                    </div>
-                </div>
+                    
                 ${user && user.role === 'captain' ? `
                     <div class="mt-12 w-full max-w-2xl">
                         <div class="grid grid-cols-3 gap-6 mb-6">
