@@ -243,6 +243,33 @@ body {
     10% { transform: translateY(-10px) scale(1.5); opacity: 1; }
     100% { transform: translateY(-400px) translateX(var(--random-x)) rotate(15deg); opacity: 0; }
 }
+        /* Colorful Team Stat Cards */
+.team-stat-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.4) 100%);
+    border-radius: 1.25rem;
+    padding: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.4s ease;
+}
+
+.card-cyan { border-left: 4px solid #00e5ff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.1); }
+.card-gold { border-left: 4px solid #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.1); }
+.card-full { 
+    border-left: 4px solid #ff0000; 
+    background: rgba(255, 0, 0, 0.05);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+    animation: glow-red 2s infinite;
+}
+
+@keyframes glow-red {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(255, 0, 0, 0.4); }
+}
+
+.squad-number {
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -1px;
+}
     </style>
 </head>
 <body class="min-h-screen">
@@ -545,16 +572,28 @@ body {
         </div>
     </div>
 
-    <!-- NEW: Franchise Squad Tracker Block -->
-    <div class="premium-glass p-6 rounded-[2rem] border-white/5">
-        <div class="flex items-center gap-3 mb-4">
-            <i class="fa-solid fa-layer-group text-cyan-400 text-xs"></i>
-            <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Franchise Squad Capacity</h5>
+    <!-- Franchise Squad Tracker Block -->
+<div class="premium-glass p-8 rounded-[2.5rem] border-white/5 bg-gradient-to-br from-[#0a0f16] to-[#041d3d]">
+    <div class="flex justify-between items-center mb-6">
+        <div class="flex items-center gap-3">
+            <div class="bg-cyan-500/20 p-2 rounded-lg border border-cyan-500/30">
+                <i class="fa-solid fa-users-rays text-cyan-400"></i>
+            </div>
+            <div>
+                <h5 class="text-xs font-black text-white uppercase tracking-[0.2em]">Franchise Squad Monitor</h5>
+                <p class="text-[8px] text-gray-500 uppercase font-bold tracking-widest">Real Time Registration Depth</p>
+            </div>
         </div>
-        <!-- This grid will contain the "Barcelona: 3/8" entries -->
-        <div id="statSquadGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-            <!-- Injected via JavaScript -->
+        <!-- Live Status Pulse -->
+        <div class="flex items-center gap-2 bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">
+            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
+            <span class="text-[8px] font-black text-green-400 uppercase">Live Nexus Sync</span>
         </div>
+    </div>
+
+    <!-- The Grid -->
+    <div id="statSquadGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <!-- Colorful Cards Injected Here -->
     </div>
 </div>
 
@@ -2152,28 +2191,56 @@ function closeSoldCard() {
     document.getElementById('tierST').innerText = stats.tiers.showtime;
     document.getElementById('tierHL').innerText = stats.tiers.highlight;
 
-    // 2. Generate the {Franchise Name}: 3/8 List
+    // 2. Generate the Colorful Franchise Stat Cards
     const squadGrid = document.getElementById('statSquadGrid');
     if (squadGrid && currentTeams.length > 0) {
         squadGrid.innerHTML = currentTeams.map(t => {
-            // Count how many players have been sold to this team specifically
+            // Calculate signings for this team
             const boughtCount = currentPlayers.filter(p => 
                 p.status === 'Sold' && p.soldTo.includes(t.name)
             ).length;
 
             const isFull = boughtCount >= t.maxCapacity;
+            const percent = (boughtCount / t.maxCapacity) * 100;
+
+            // Determine Theme Color based on progress
+            let themeClass = "card-cyan";
+            let accentColor = "text-cyan-400";
+            if (boughtCount >= 4) { themeClass = "card-gold"; accentColor = "text-yellow-400"; }
+            if (isFull) { themeClass = "card-full"; accentColor = "text-red-500"; }
 
             return `
-                <div class="bg-black/20 border ${isFull ? 'border-red-500/50 animate-pulse' : 'border-white/5'} p-2 px-3 rounded-xl flex justify-between items-center transition-all">
-                    <span class="text-[10px] font-bold text-gray-400 truncate mr-2">${t.name}</span>
-                    <span class="text-[11px] font-black ${isFull ? 'text-red-500' : 'text-white'}">
-                        ${boughtCount}/${t.maxCapacity}
-                    </span>
-                </div>
-            `;
+                <div class="team-stat-card ${themeClass} flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-tighter text-gray-300 truncate w-2/3">${t.name}</span>
+                        <i class="fa-solid fa-shield-halved text-[9px] opacity-20"></i>
+                    </div>
+                    
+                    <div class="flex items-end justify-between">
+                        <div class="squad-number">
+                            <span class="text-2xl font-black text-white leading-none">${boughtCount}</span>
+                            <span class="text-[9px] font-bold text-gray-500">/${t.maxCapacity}</span>
+                        </div>
+                        
+                        <!-- Circular progress indicator -->
+                        <div class="w-7 h-7 relative flex items-center justify-center">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="14" cy="14" r="12" stroke="rgba(255,255,255,0.05)" stroke-width="2" fill="transparent" />
+                                <circle cx="14" cy="14" r="12" stroke="currentColor" stroke-width="2" fill="transparent" 
+                                        class="${accentColor}"
+                                        stroke-dasharray="75" 
+                                        stroke-dashoffset="${75 - (75 * percent / 100)}" 
+                                        stroke-linecap="round" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 text-[7px] font-black uppercase tracking-[0.2em] ${isFull ? 'text-red-500' : 'text-gray-600'}">
+                        ${isFull ? 'SQUAD COMPLETE' : 'Recruiting...'}
+                    </div>
+                </div>`;
         }).join('');
     }
-});
             </script>
     <!-- IMAGE ZOOM MODAL -->
 <div id="imageZoomModal" class="hidden fixed inset-0 z-[300] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300" onclick="closeZoom()">
