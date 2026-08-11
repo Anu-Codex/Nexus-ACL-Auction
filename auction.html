@@ -2298,152 +2298,140 @@ function renderPubFlyingEmoji(emoji) {
     container.appendChild(el);
     setTimeout(() => el.remove(), 2000);
 }
-
-    function generatePDF() {
+async function generatePDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
 
-    // --- 1. SET THEME COLORS ---
     const colors = {
-        bg: [10, 15, 22],        // #0a0f16
-        cyan: [0, 229, 255],     // #00e5ff
-        yellow: [234, 255, 0],   // #eaff00
-        gray: [100, 116, 139]    // #64748b
+        black: [0, 0, 0],
+        cyan: [0, 229, 255],
+        yellow: [234, 255, 0],
+        slate: [20, 25, 35]
     };
 
-    // --- 2. ADD PAGE BACKGROUND ---
-    doc.setFillColor(...colors.bg);
-    doc.rect(0, 0, 210, 297, 'F');
+    const applyBlackBG = () => {
+        doc.setFillColor(0, 0, 0);
+        doc.rect(0, 0, 210, 297, 'F');
+    };
 
-    // --- 3. HEADER SECTION ---
+    // --- PAGE 1: MARKET ANALYTICS ---
+    applyBlackBG();
+
+    // 1. HEADER
     doc.setTextColor(...colors.cyan);
     doc.setFontSize(28);
     doc.setFont("helvetica", "bold");
-    doc.text("NEXUS LEGENDS", 105, 30, { align: "center" });
-
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("OFFICIAL AUCTION TOUR REPORT - SEASON 2026-27", 105, 38, { align: "center" });
-
-    // Decorative Line
-    doc.setDrawColor(...colors.yellow);
-    doc.setLineWidth(1);
-    doc.line(80, 42, 130, 42);
-
-    // --- 4. STATISTICS SUMMARY BOX ---
-    const stats = {
-        total: currentPlayers.length,
-        sold: currentPlayers.filter(p => p.status === 'Sold').length,
-        unsold: currentPlayers.filter(p => p.status === 'Unsold').length
-    };
-
-    doc.setFillColor(30, 41, 59); // Dark blue-gray box
-    doc.roundedRect(14, 55, 182, 25, 3, 3, 'F');
-
+    doc.text("NEXUS LEGENDS", 105, 20, { align: "center" });
+    
+    doc.setTextColor(150, 150, 150);
     doc.setFontSize(9);
-    doc.setTextColor(...colors.gray);
-    doc.text("TOTAL POOL", 35, 65, { align: "center" });
-    doc.text("PLAYERS SOLD", 105, 65, { align: "center" });
-    doc.text("CURRENTLY UNSOLD", 175, 65, { align: "center" });
+    doc.text("OFFICIAL POST-AUCTION FINANCIAL & ANALYTICS REPORT", 105, 27, { align: "center" });
 
-    doc.setFontSize(16);
+    // 2. GLOBAL STATS SUMMARY BOX
+    const soldCount = currentPlayers.filter(p => p.status === 'Sold').length;
+    doc.setFillColor(...colors.slate);
+    doc.roundedRect(15, 35, 180, 35, 3, 3, 'F');
+    
+    doc.setFontSize(10);
     doc.setTextColor(255, 255, 255);
-    doc.text(stats.total.toString(), 35, 75, { align: "center" });
-    doc.setTextColor(...colors.yellow);
-    doc.text(stats.sold.toString(), 105, 75, { align: "center" });
-    doc.setTextColor(...colors.cyan);
-    doc.text(stats.unsold.toString(), 175, 75, { align: "center" });
+    doc.text(`TOTAL POOL: ${currentPlayers.length}`, 30, 45);
+    doc.text(`SOLD: ${soldCount}`, 105, 45, { align: "center" });
+    doc.text(`UNSOLD: ${currentPlayers.length - soldCount}`, 180, 45, { align: "right" });
 
-    // --- 5. DATA TABLE (Sold Players) ---
-    const soldData = currentPlayers
-        .filter(p => p.status === 'Sold')
-        .map((p, index) => [
-            index + 1,
-            p.name.toUpperCase(),
-            p.strength,
-            p.cardType.toUpperCase(),
-            p.soldTo.split(' (')[0], // Extract team name only
-            p.soldTo.split('(')[1].replace(')', '') // Extract price only
-        ]);
+    // Tier Breakdown Row
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    const bt = currentPlayers.filter(p => p.cardType === 'BIG TIME').length;
+    const ep = currentPlayers.filter(p => p.cardType === 'EPIC').length;
+    const st = currentPlayers.filter(p => p.cardType === 'SHOWTIME').length;
+    const hl = currentPlayers.filter(p => p.cardType === 'HIGHLIGHT').length;
+    doc.text(`BIG TIME: ${bt}   |   EPIC: ${ep}   |   SHOWTIME: ${st}   |   HIGHLIGHT: ${hl}`, 105, 58, { align: "center" });
+
+    // 3. MARKET PRICE GRAPH (Y=75 to Y=125)
+    const chartCanvas = document.getElementById('priceChart');
+    if (chartCanvas) {
+        const chartImg = chartCanvas.toDataURL('image/png', 1.0);
+        doc.setTextColor(...colors.yellow);
+        doc.setFontSize(11);
+        doc.text("MARKET PRICE VOLATILITY INDEX", 15, 80);
+        doc.addImage(chartImg, 'PNG', 15, 85, 180, 45);
+    }
+
+    // 4. FRANCHISE FINANCIAL SUMMARY (Includes Purse)
+    doc.setTextColor(...colors.cyan);
+    doc.setFontSize(11);
+    doc.text("FRANCHISE SQUAD & PURSE SUMMARY", 15, 142);
+
+    const franchiseData = currentTeams.map(t => {
+        const boughtCount = currentPlayers.filter(p => p.status === 'Sold' && p.soldTo.includes(t.name)).length;
+        return [
+            t.name.toUpperCase(), 
+            `${boughtCount} / ${t.maxCapacity}`, // Squad Depth
+            `${t.budget} M`                      // REMAINING PURSE
+        ];
+    });
 
     doc.autoTable({
-        startY: 95,
-        head: [['#', 'PLAYER IDENTITY', 'STR', 'TIER', 'FRANCHISE', 'PRICE']],
-        body: soldData,
+        startY: 147,
+        head: [['FRANCHISE IDENTITY', 'SQUAD DEPTH', 'REMAINING PURSE']],
+        body: franchiseData,
         theme: 'grid',
-        headStyles: {
-            fillColor: colors.cyan,
-            textColor: [0, 0, 0],
-            fontSize: 10,
-            halign: 'center',
-            fontStyle: 'bold'
-        },
-        bodyStyles: {
-            fillColor: [15, 23, 42],
-            textColor: [200, 200, 200],
-            fontSize: 9,
-            cellPadding: 5
-        },
-        alternateRowStyles: {
-            fillColor: [22, 30, 48]
-        },
-        columnStyles: {
-            0: { halign: 'center', cellWidth: 10 },
-            2: { halign: 'center', textColor: colors.yellow, fontStyle: 'bold' },
-            5: { halign: 'right', textColor: colors.cyan, fontStyle: 'bold' }
-        },
-        margin: { left: 14, right: 14 }
+        styles: { fontSize: 8, cellPadding: 3, halign: 'center' },
+        headStyles: { fillColor: [0, 80, 100], textColor: [255, 255, 255] },
+        bodyStyles: { fillColor: [10, 10, 10], textColor: [255, 255, 255], lineColor: [35, 35, 35] },
+        columnStyles: { 
+            0: { halign: 'left', fontStyle: 'bold' },
+            2: { textColor: colors.cyan, fontStyle: 'bold' } // Highlight Purse in Cyan
+        }
     });
-        // --- PDF SEGMENT: MARKET GRAPH ---
-const chartCanvas = document.getElementById('priceChart');
-if (chartCanvas) {
-    // Converts the live Chart.js canvas into a high-res image
-    const chartImg = chartCanvas.toDataURL('image/png', 1.0);
+
+    // --- PAGE 2: DETAILED SIGNINGS LOG ---
+    doc.addPage();
+    applyBlackBG();
+
     doc.setTextColor(...colors.yellow);
-    doc.setFontSize(12);
-    doc.text("MARKET PRICE VOLATILITY INDEX", 15, 80);
-    // Position: x=15, y=85, width=180, height=45
-    doc.addImage(chartImg, 'PNG', 15, 85, 180, 45);
-}
-        // --- PDF SEGMENT: FRANCHISE SQUAD DEPTH ---
-doc.setTextColor(...colors.cyan);
-doc.setFontSize(12);
-doc.text("FRANCHISE RECRUITMENT SUMMARY", 15, 145);
+    doc.setFontSize(14);
+    doc.text("DETAILED SIGNINGS LOG", 15, 20);
 
-const franchiseData = currentTeams.map(t => {
-    const boughtCount = currentPlayers.filter(p => p.status === 'Sold' && p.soldTo.includes(t.name)).length;
-    return [
-        t.name.toUpperCase(), 
-        `${boughtCount} / ${t.maxCapacity}`, // Shows 3/8 as requested
-        `${t.budget} M`
-    ];
-});
+    const soldPlayers = currentPlayers.filter(p => p.status === 'Sold').map((p, i) => [
+        i + 1, 
+        p.name.toUpperCase(), 
+        p.strength, 
+        p.cardType, 
+        p.soldTo.split(' (')[0],               // Team Name
+        p.soldTo.split('(')[1].replace(')', '') // Final Bid Price
+    ]);
 
-doc.autoTable({
-    startY: 150,
-    head: [['FRANCHISE IDENTITY', 'SQUAD DEPTH', 'REMAINING PURSE']],
-    body: franchiseData,
-    theme: 'grid',
-    headStyles: { fillColor: [0, 100, 120], textColor: [255, 255, 255] },
-    bodyStyles: { fillColor: [20, 25, 35], textColor: [230, 230, 230], fontSize: 9 },
-    columnStyles: { 1: { halign: 'center', fontStyle: 'bold' } }
-});
+    doc.autoTable({
+        startY: 28,
+        head: [['#', 'PLAYER IDENTITY', 'STR', 'TIER', 'FRANCHISE', 'PRICE']],
+        body: soldPlayers,
+        theme: 'striped',
+        styles: { fontSize: 8, cellPadding: 4 },
+        headStyles: { fillColor: colors.cyan, textColor: [0, 0, 0], fontStyle: 'bold' },
+        bodyStyles: { fillColor: [15, 15, 15], textColor: [220, 220, 220] },
+        alternateRowStyles: { fillColor: [25, 25, 25] },
+        columnStyles: {
+            2: { textColor: colors.yellow, fontStyle: 'bold', halign: 'center' },
+            5: { textColor: colors.cyan, fontStyle: 'bold', halign: 'right' }
+        },
+        didDrawPage: (data) => applyBlackBG() 
+    });
 
-    // --- 6. FOOTER ---
+    // --- FOOTER ---
     const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
-        doc.setFontSize(8);
-        doc.setTextColor(...colors.gray);
-        doc.text(`NEXUS LEGENDS OFFICIAL DOCUMENT - Page ${i} of ${pageCount}`, 105, 285, { align: "center" });
-        doc.text("GENERATED BY RAIZO CORE SYSTEM", 105, 290, { align: "center" });
+        doc.setFontSize(7);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`NEXUS LEGENDS OFFICIAL DOCUMENT - Page ${i} of ${pageCount}`, 105, 288, { align: "center" });
+        doc.text("GENERATED BY RAIZO CORE SYSTEM", 105, 292, { align: "center" });
     }
 
-    // --- 7. SAVE ---
-    const fileName = `Nexus_Report_${new Date().toLocaleDateString()}.pdf`;
-    doc.save(fileName);
-    }
+    doc.save(`Nexus_Elite_Report_${new Date().getTime()}.pdf`);
+        }
+
+            
 
     if(user) startApp();
     else showAuthStep('choice');
