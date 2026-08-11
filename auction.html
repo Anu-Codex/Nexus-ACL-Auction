@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1024">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>NEXUS LEGENDS | AUCTION TOUR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
@@ -409,6 +409,37 @@ body {
 @keyframes eye-scan {
     0%, 100% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.2); opacity: 0.5; }
+}
+        /* Universal Layout Fixes */
+html, body {
+    /* Fix for iPhone bottom bar covering content */
+    height: -webkit-fill-available; 
+    overflow-x: hidden;
+    width: 100%;
+}
+
+body {
+    min-h-screen: 100vh;
+    min-h-screen: 100dvh; /* Dynamic viewport height for modern browsers */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Wide Desktop Optimization */
+@media (min-width: 1536px) {
+    .max-w-screen-xl {
+        max-width: 1400px !important;
+    }
+}
+
+/* iPhone/Mobile Scroll Fix */
+.overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Glassmorphism Fix for older iPhones */
+.premium-glass {
+    -webkit-backdrop-filter: blur(16px);
 }
 
     </style>
