@@ -885,6 +885,32 @@ body {
     <h3 class="text-xl font-bold mb-6 text-white uppercase tracking-widest flex items-center gap-3">
         <i class="fa-solid fa-user-shield text-cyan-400"></i> LOGIN MANAGEMENT
     </h3>
+    <!-- ADMIN DIRECT ASSIGN PANEL -->
+<div id="adminDirectAssignPanel" class="hidden premium-glass rounded-[2rem] p-8 border border-green-500/20 mt-8 mb-8">
+    <h3 class="text-xl font-bold mb-6 text-white uppercase tracking-widest flex items-center gap-3">
+        <i class="fa-solid fa-file-signature text-green-400"></i> Direct Squad Registration
+    </h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="space-y-1">
+            <label class="text-[9px] font-black text-gray-500 uppercase ml-2">Select Available Player</label>
+            <select id="assignPlayerSelect" class="w-full bg-gray-900 border border-white/10 p-4 rounded-2xl text-white outline-none focus:border-green-400"></select>
+        </div>
+        <div class="space-y-1">
+            <label class="text-[9px] font-black text-gray-500 uppercase ml-2">Assign to Franchise</label>
+            <select id="assignTeamSelect" class="w-full bg-gray-900 border border-white/10 p-4 rounded-2xl text-white outline-none focus:border-green-400"></select>
+        </div>
+        <div class="space-y-1">
+            <label class="text-[9px] font-black text-gray-500 uppercase ml-2">Set Registration Value (M)</label>
+            <input id="assignValueInput" type="number" placeholder="Value (e.g. 50)" class="w-full bg-gray-900 border border-white/10 p-4 rounded-2xl text-white outline-none focus:border-green-400">
+        </div>
+    </div>
+
+    <button onclick="handleForceAssign()" class="w-full bg-green-500 hover:bg-green-400 text-black font-black py-4 rounded-2xl uppercase transition-all shadow-lg shadow-green-900/20">
+        Confirm Direct Assignment (Bypass Auction)
+    </button>
+    <p class="text-[9px] text-gray-500 mt-3 text-center uppercase">Note: This will not deduct money from the team's remaining purse.</p>
+</div>
     <!-- DANGER ZONE RESET -->
 <div class="mt-12 pt-8 border-t border-red-500/20">
     <h4 class="text-red-500 font-black text-[10px] uppercase tracking-[0.5em] mb-4">Danger Zone</h4>
@@ -1133,6 +1159,7 @@ function handleAddTeam() {
 socket.on('updateTeams', (teams) => {
     // 1. Update the standard Sidebar Purse list (for everyone)
     renderTeams(teams);
+    updateAssignDropdowns();
 
     // 2. Update the Admin Franchise Management Table (for Admin only)
     const mgmtDisplay = document.getElementById('teamManagementDisplay');
@@ -1157,6 +1184,7 @@ function startApp() {
     if(!user) return;
     document.getElementById('authOverlay').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('adminDirectAssignPanel').classList.remove('hidden');
     document.getElementById('userName').innerText = user.name;
     document.getElementById('userRole').innerText = user.role;
     setupGhostWatch();
@@ -1201,6 +1229,7 @@ function startApp() {
     } else {
         initPriceChart([]); // Initialize empty if no history
         }
+        updateAssignDropdowns();
     });
 
     socket.on('updatePlayers', (p) => { 
@@ -1211,6 +1240,7 @@ function startApp() {
     } else {
         renderPlayers(p);
     }
+        updateAssignDropdowns();
 });
     socket.on('updateTeams', (t) => { currentTeams = t; renderTeams(t); });
     // --- UPDATED VOICE ANNOUNCEMENT LOGIC ---
@@ -1553,6 +1583,40 @@ function renderScarcityMap() {
             </div>`;
     }).join('');
 }
+        // Add these to update the Direct Assign dropdowns
+function updateAssignDropdowns() {
+    if (user.role !== 'admin') return;
+
+    // 1. Populate Player Dropdown (Only show Available/Unsold)
+    const pSelect = document.getElementById('assignPlayerSelect');
+    if (pSelect) {
+        const available = currentPlayers.filter(p => p.status === 'Available' || p.status === 'Unsold');
+        pSelect.innerHTML = available.map(p => `<option value="${p._id}">${p.name} (Str: ${p.strength})</option>`).join('');
+    }
+
+    // 2. Populate Team Dropdown
+    const tSelect = document.getElementById('assignTeamSelect');
+    if (tSelect) {
+        tSelect.innerHTML = currentTeams.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+    }
+}
+
+// Call updateAssignDropdowns() inside:
+// 1. socket.on('updatePlayers')
+// 2. socket.on('updateTeams')
+// 3. socket.on('initialData')
+        function handleForceAssign() {
+    const playerId = document.getElementById('assignPlayerSelect').value;
+    const teamName = document.getElementById('assignTeamSelect').value;
+    const price = document.getElementById('assignValueInput').value;
+
+    if (!playerId || !teamName || price === "") return alert("Please select player, team, and set a value.");
+
+    if (confirm(`FORCE ASSIGN: Register player to ${teamName} for ${price}M? (Budget will NOT be deducted)`)) {
+        socket.emit('adminForceAssign', { playerId, teamName, price });
+        document.getElementById('assignValueInput').value = '';
+    }
+        }
 
 
     function sendChat() { 
