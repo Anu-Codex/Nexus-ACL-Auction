@@ -2390,34 +2390,54 @@ async function generatePDF() {
     applyBlackBG();
 
     doc.setTextColor(...colors.yellow);
-    doc.setFontSize(14);
-    doc.text("DETAILED SIGNINGS LOG", 15, 20);
+    doc.setFontSize(16);
+    doc.text("OFFICIAL SIGNINGS LOG", 15, 20);
 
-    const soldPlayers = currentPlayers.filter(p => p.status === 'Sold').map((p, i) => [
-        i + 1, 
-        p.name.toUpperCase(), 
-        p.strength, 
-        p.cardType, 
-        p.soldTo.split(' (')[0],               // Team Name
-        p.soldTo.split('(')[1].replace(')', '') // Final Bid Price
-    ]);
+    // CRITICAL: Safe Data Mapping to prevent crashes
+    const soldPlayersList = currentPlayers.filter(p => p.status === 'Sold').map((p, i) => {
+        let team = "-";
+        let price = "0";
+        
+        // This checks if soldTo has the format "Team (PriceM)"
+        if (p.soldTo && p.soldTo.includes('(')) {
+            const parts = p.soldTo.split('(');
+            team = parts[0].trim();
+            price = parts[1].replace(')', '').trim();
+        } else {
+            team = p.soldTo || "N/A";
+        }
 
+        return [
+            i + 1,
+            p.name.toUpperCase(),
+            p.strength,
+            p.cardType,
+            team.toUpperCase(),
+            price
+        ];
+    });
     doc.autoTable({
-        startY: 28,
-        head: [['#', 'PLAYER IDENTITY', 'STR', 'TIER', 'FRANCHISE', 'PRICE']],
-        body: soldPlayers,
-        theme: 'striped',
-        styles: { fontSize: 8, cellPadding: 4 },
-        headStyles: { fillColor: colors.cyan, textColor: [0, 0, 0], fontStyle: 'bold' },
-        bodyStyles: { fillColor: [15, 15, 15], textColor: [220, 220, 220] },
-        alternateRowStyles: { fillColor: [25, 25, 25] },
+        startY: 30,
+        head: [['#', 'PLAYER', 'STRENGTH', 'TIER', 'FRANCHISE', 'PRICE']],
+        body: soldPlayersList,
+        theme: 'grid',
+        styles: { fontSize: 8, cellPadding: 3 },
+        headStyles: { fillColor: colors.cyan, textColor: [0,0,0], fontStyle: 'bold' },
+        bodyStyles: { fillColor: [5, 5, 5], textColor: [255, 255, 255], lineColor: [40, 40, 40] },
+        alternateRowStyles: { fillColor: [15, 15, 15] },
         columnStyles: {
-            2: { textColor: colors.yellow, fontStyle: 'bold', halign: 'center' },
+            2: { textColor: colors.yellow, fontStyle: 'bold' },
             5: { textColor: colors.cyan, fontStyle: 'bold', halign: 'right' }
         },
-        didDrawPage: (data) => applyBlackBG() 
+        didDrawPage: function(data) {
+            // Draw background only for new pages created by this table
+            const pageCount = doc.internal.getNumberOfPages();
+            if (data.pageNumber > 1) {
+                doc.setPage(data.pageNumber);
+                applyBlackBG();
+            }
+        }
     });
-
     // --- FOOTER ---
     const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
