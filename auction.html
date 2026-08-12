@@ -2393,6 +2393,7 @@ function renderPubFlyingEmoji(emoji) {
     container.appendChild(el);
     setTimeout(() => el.remove(), 2000);
 }
+
 async function generatePDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
@@ -2404,15 +2405,15 @@ async function generatePDF() {
         slate: [20, 25, 35]
     };
 
-    const applyBlackBG = () => {
+    // Background Helper - ALWAYS called before text/tables
+    const applyBG = () => {
         doc.setFillColor(0, 0, 0);
         doc.rect(0, 0, 210, 297, 'F');
     };
 
-    // --- PAGE 1: MARKET ANALYTICS ---
-    applyBlackBG();
+    // --- PAGE 1: ANALYTICS & PURSES ---
+    applyBG();
 
-    // 1. HEADER
     doc.setTextColor(...colors.cyan);
     doc.setFontSize(28);
     doc.setFont("helvetica", "bold");
@@ -2420,126 +2421,93 @@ async function generatePDF() {
     
     doc.setTextColor(150, 150, 150);
     doc.setFontSize(9);
-    doc.text("OFFICIAL POST-AUCTION FINANCIAL & ANALYTICS REPORT", 105, 27, { align: "center" });
+    doc.text("OFFICIAL AUCTION FINANCIAL REPORT", 105, 27, { align: "center" });
 
-    // 2. GLOBAL STATS SUMMARY BOX
+    // Global Stats Summary
+    const totalCount = currentPlayers.length;
     const soldCount = currentPlayers.filter(p => p.status === 'Sold').length;
     doc.setFillColor(...colors.slate);
-    doc.roundedRect(15, 35, 180, 35, 3, 3, 'F');
-    
+    doc.roundedRect(15, 35, 180, 25, 3, 3, 'F');
     doc.setFontSize(10);
     doc.setTextColor(255, 255, 255);
-    doc.text(`TOTAL POOL: ${currentPlayers.length}`, 30, 45);
-    doc.text(`SOLD: ${soldCount}`, 105, 45, { align: "center" });
-    doc.text(`UNSOLD: ${currentPlayers.length - soldCount}`, 180, 45, { align: "right" });
+    doc.text(`TOTAL POOL: ${totalCount}  |  SOLD: ${soldCount}  |  UNSOLD: ${totalCount - soldCount}`, 105, 50, { align: "center" });
 
-    // Tier Breakdown Row
-    doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150);
-    const bt = currentPlayers.filter(p => p.cardType === 'BIG TIME').length;
-    const ep = currentPlayers.filter(p => p.cardType === 'EPIC').length;
-    const st = currentPlayers.filter(p => p.cardType === 'SHOWTIME').length;
-    const hl = currentPlayers.filter(p => p.cardType === 'HIGHLIGHT').length;
-    doc.text(`BIG TIME: ${bt}   |   EPIC: ${ep}   |   SHOWTIME: ${st}   |   HIGHLIGHT: ${hl}`, 105, 58, { align: "center" });
-
-    // 3. MARKET PRICE GRAPH (Y=75 to Y=125)
+    // Market Graph
     const chartCanvas = document.getElementById('priceChart');
     if (chartCanvas) {
         const chartImg = chartCanvas.toDataURL('image/png', 1.0);
         doc.setTextColor(...colors.yellow);
-        doc.setFontSize(11);
-        doc.text("MARKET PRICE VOLATILITY INDEX", 15, 80);
-        doc.addImage(chartImg, 'PNG', 15, 85, 180, 45);
+        doc.text("MARKET PRICE INDEX", 15, 75);
+        doc.addImage(chartImg, 'PNG', 15, 80, 180, 45);
     }
 
-    // 4. FRANCHISE FINANCIAL SUMMARY (Includes Purse)
+    // Franchise Summary
     doc.setTextColor(...colors.cyan);
-    doc.setFontSize(11);
-    doc.text("FRANCHISE SQUAD & PURSE SUMMARY", 15, 142);
-
-    const franchiseData = currentTeams.map(t => {
-        const boughtCount = currentPlayers.filter(p => p.status === 'Sold' && p.soldTo.includes(t.name)).length;
-        return [
-            t.name.toUpperCase(), 
-            `${boughtCount} / ${t.maxCapacity}`, // Squad Depth
-            `${t.budget} M`                      // REMAINING PURSE
-        ];
-    });
+    doc.text("FRANCHISE PURSE & SQUAD STATUS", 15, 140);
+    const franchiseData = currentTeams.map(t => [
+        t.name.toUpperCase(), 
+        `${currentPlayers.filter(p => p.status === 'Sold' && p.soldTo.includes(t.name)).length} / ${t.maxCapacity}`, 
+        `${t.budget} M`
+    ]);
 
     doc.autoTable({
-        startY: 147,
-        head: [['FRANCHISE IDENTITY', 'SQUAD DEPTH', 'REMAINING PURSE']],
+        startY: 145,
+        head: [['FRANCHISE', 'SQUAD', 'REMAINING PURSE']],
         body: franchiseData,
         theme: 'grid',
-        styles: { fontSize: 8, cellPadding: 3, halign: 'center' },
-        headStyles: { fillColor: [0, 80, 100], textColor: [255, 255, 255] },
-        bodyStyles: { fillColor: [10, 10, 10], textColor: [255, 255, 255], lineColor: [35, 35, 35] },
-        columnStyles: { 
-            0: { halign: 'left', fontStyle: 'bold' },
-            2: { textColor: colors.cyan, fontStyle: 'bold' } // Highlight Purse in Cyan
-        }
+        styles: { fontSize: 8, halign: 'center', fillColor: [10, 10, 10], textColor: [255, 255, 255] },
+        headStyles: { fillColor: [0, 80, 100] },
+        columnStyles: { 0: { halign: 'left' }, 2: { textColor: colors.cyan, fontStyle: 'bold' } }
     });
 
-    // --- PAGE 2: DETAILED SIGNINGS LOG ---
+    // --- PAGE 2: PLAYER SOLD DATA (FIXED & SEPARATED) ---
     doc.addPage();
-    applyBlackBG();
+    applyBG(); // Background first!
 
     doc.setTextColor(...colors.yellow);
     doc.setFontSize(16);
     doc.text("OFFICIAL SIGNINGS LOG", 15, 20);
 
-    // CRITICAL: Safe Data Mapping to prevent crashes
-    const soldPlayersList = currentPlayers.filter(p => p.status === 'Sold').map((p, i) => {
+    // FIXED: Mapping logic to ensure data is captured correctly
+    const soldPlayersRows = currentPlayers.filter(p => p.status === 'Sold').map((p, i) => {
         let team = "-";
         let price = "0";
-        
-        // This checks if soldTo has the format "Team (PriceM)"
         if (p.soldTo && p.soldTo.includes('(')) {
             const parts = p.soldTo.split('(');
             team = parts[0].trim();
-            price = parts[1].replace(')', '').trim();
+            price = parts[1].split(')')[0].trim(); // Extracts "150M" from "150M)"
         } else {
             team = p.soldTo || "N/A";
         }
-
-        return [
-            i + 1,
-            p.name.toUpperCase(),
-            p.strength,
-            p.cardType,
-            team.toUpperCase(),
-            price
-        ];
+        return [i + 1, p.name.toUpperCase(), p.strength, p.cardType, team.toUpperCase(), price];
     });
+
     doc.autoTable({
-        startY: 30,
-        head: [['#', 'PLAYER', 'STRENGTH', 'TIER', 'FRANCHISE', 'PRICE']],
-        body: soldPlayersList,
+        startY: 30, // Starts at the top of Page 2
+        head: [['#', 'PLAYER IDENTITY', 'STRENGTH', 'TIER', 'FRANCHISE', 'PRICE']],
+        body: soldPlayersRows,
         theme: 'grid',
-        styles: { fontSize: 8, cellPadding: 3 },
-        headStyles: { fillColor: colors.cyan, textColor: [0,0,0], fontStyle: 'bold' },
-        bodyStyles: { fillColor: [5, 5, 5], textColor: [255, 255, 255], lineColor: [40, 40, 40] },
-        alternateRowStyles: { fillColor: [15, 15, 15] },
-        columnStyles: {
-            2: { textColor: colors.yellow, fontStyle: 'bold' },
-            5: { textColor: colors.cyan, fontStyle: 'bold', halign: 'right' }
-        },
+        styles: { fontSize: 8, cellPadding: 3, fillColor: [15, 15, 15], textColor: [240, 240, 240], lineColor: [40, 40, 40] },
+        headStyles: { fillColor: colors.cyan, textColor: [0, 0, 0], fontStyle: 'bold' },
+        alternateRowStyles: { fillColor: [22, 22, 22] },
+        columnStyles: { 2: { textColor: colors.yellow, fontStyle: 'bold' }, 5: { textColor: colors.cyan, fontStyle: 'bold', halign: 'right' } },
+        
+        // This hook ensures that IF the table flows to Page 3, 4, etc., those pages are also black
         didDrawPage: function(data) {
-            // Draw background only for new pages created by this table
-            const pageCount = doc.internal.getNumberOfPages();
-            if (data.pageNumber > 1) {
-                doc.setPage(data.pageNumber);
-                applyBlackBG();
-            }
+            const totalPages = doc.internal.getNumberOfPages();
+            // We set the fill color but do NOT draw a rectangle here 
+            // because it would cover the rows. Instead, we style the table itself.
+            doc.setPage(data.pageNumber);
         }
     });
+
     // --- FOOTER ---
-    const pageCount = doc.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
         doc.setFontSize(7);
         doc.setTextColor(100, 100, 100);
-        doc.text(`NEXUS LEGENDS OFFICIAL DOCUMENT - Page ${i} of ${pageCount}`, 105, 288, { align: "center" });
+        doc.text(`NEXUS LEGENDS - OFFICIAL LOG - PAGE ${i} OF ${totalPages}`, 105, 290, { align: "center" });
         doc.text("GENERATED BY RAIZO CORE SYSTEM", 105, 292, { align: "center" });
     }
 
