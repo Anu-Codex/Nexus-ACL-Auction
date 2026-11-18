@@ -600,6 +600,8 @@
 
         .cursor-zoom-in { cursor: zoom-in; }
         #chatInputContainer { visibility: visible; opacity: 1; }
+        .admin-only-control { display: none !important; }
+body:has(#adminUserManagement:not(.hidden)) .admin-only-control { display: inline-flex !important; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -1063,6 +1065,12 @@
                             <i class="fa-solid fa-display mr-2"></i> SHOWCASE UNSOLD
                         </button>
                     </div>
+                    <button onclick="triggerArchiveRoster()" class="admin-only-control bg-white/15 hover:bg-white text-white hover:text-blue-950 border border-white/40 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider btn-premium items-center gap-2">
+    <i class="fa-solid fa-box-archive"></i> ARCHIVE ROSTER (NEW AUCTION)
+</button>
+<button onclick="triggerRestoreArchived()" class="admin-only-control bg-amber-400/20 hover:bg-amber-400 text-amber-100 hover:text-blue-950 border border-amber-300/50 px-4 py-3 rounded-xl font-black text-xs uppercase tracking-wider btn-premium items-center gap-2">
+    <i class="fa-solid fa-rotate-left"></i> RESTORE ARCHIVE
+</button>
 
                     <!-- ROW 1: Live Stage Override Controls & Treasury Management -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -3053,6 +3061,19 @@ function getSmartBudgetAdvice(team) {
         else container.classList.remove('ghost-active');
     }
 });
+        function triggerArchiveRoster() {
+    if (!user || user.role !== 'admin') return;
+    if (confirm("Archive current roster for a new auction? Old players stay saved in MongoDB, and the screen clears for everyone.")) {
+        socket.emit('archiveRosterForNewAuction');
+    }
+}
+
+function triggerRestoreArchived() {
+    if (!user || user.role !== 'admin') return;
+    if (confirm("Restore all archived players back into the live roster?")) {
+        socket.emit('restoreArchivedRoster');
+    }
+}
 
 // 2. EMITTER: For Captains only
 function setupGhostWatch() {
