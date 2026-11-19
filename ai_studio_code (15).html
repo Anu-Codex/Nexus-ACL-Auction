@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS LEGENDS | Captain Master Walkthrough Video</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Inter:wght@500;600;700;800&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #07163b 0%, #0f2b6d 55%, #1e3a8a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .studio-shell {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 24px;
+            border: 2px solid #fbbf24;
+            box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            color: #0f172a;
+        }
+
+        .studio-header {
+            background: linear-gradient(95deg, #0f2b6d 0%, #1d4ed8 65%, #d97706 100%);
+            padding: 14px 22px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid #fbbf24;
+            color: #ffffff;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(251, 191, 36, 0.2);
+            border: 1.5px solid #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fde047;
+            font-size: 18px;
+        }
+
+        .brand h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            line-height: 1.05;
+        }
+
+        .brand span {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #fde68a;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.15s ease, filter 0.15s ease;
+        }
+
+        .btn:hover { transform: translateY(-1px); filter: brightness(1.07); }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            color: #0f172a;
+            box-shadow: 0 6px 16px rgba(217, 119, 6, 0.35);
+        }
+
+        .btn-blue {
+            background: #0f2b6d;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-voice {
+            background: rgba(255, 255, 255, 0.16);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+
+        .btn-voice.active {
+            background: #10b981;
+            border-color: #34d399;
+        }
+
+        .btn-recording {
+            background: #dc2626 !important;
+            color: #ffffff !important;
+            animation: recPulse 1s infinite;
+        }
+
+        @keyframes recPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+            50% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+        }
+
+        .stage-wrap {
+            position: relative;
+            background: #0f172a;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .controls-bar {
+            background: #f8fafc;
+            padding: 14px 22px;
+            border-top: 1px solid #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .scrubber-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .time-badge {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 800;
+            font-size: 16px;
+            color: #0f2b6d;
+            min-width: 105px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            accent-color: #1d4ed8;
+            height: 6px;
+            cursor: pointer;
+        }
+
+        .scene-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .scene-pill {
+            background: #e2e8f0;
+            color: #1e293b;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .scene-pill.active {
+            background: linear-gradient(95deg, #0f2b6d, #1d4ed8);
+            color: #fde047;
+            border-color: #0f2b6d;
+        }
+
+        .note-bar {
+            font-size: 11px;
+            color: #475569;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="studio-shell">
+    <div class="studio-header">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div>
+                <h1>Nexus Legends — Captain Master Guide</h1>
+                <span>1920×1080 HD • Detailed 105s Captain Briefing</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button id="playBtn" class="btn btn-blue" onclick="togglePlay()">
+                <i class="fa-solid fa-play"></i> Play
+            </button>
+            <button class="btn btn-blue" onclick="restartVideo()">
+                <i class="fa-solid fa-rotate-left"></i> Restart
+            </button>
+            <button id="voiceBtn" class="btn btn-voice" onclick="toggleVoiceover()">
+                <i class="fa-solid fa-microphone"></i> Voiceover: OFF
+            </button>
+            <button id="exportBtn" class="btn btn-gold" onclick="toggleExportVideo()">
+                <i class="fa-solid fa-download"></i> Export Video (.webm)
+            </button>
+        </div>
+    </div>
+
+    <div class="stage-wrap">
+        <canvas id="videoCanvas" width="1920" height="1080"></canvas>
+    </div>
+
+    <div class="controls-bar">
+        <div class="scrubber-row">
+            <span id="timeLabel" class="time-badge">00:00 / 01:45</span>
+            <input id="scrubber" type="range" min="0" max="105" step="0.1" value="0" oninput="seekVideo(this.value)">
+        </div>
+        <div class="scene-pills">
+            <div class="pill-group">
+                <button class="scene-pill active" onclick="jumpTo(0)">1. Audio, Sync & 2FA Login</button>
+                <button class="scene-pill" onclick="jumpTo(18)">2. Live Arena & Bidding</button>
+                <button class="scene-pill" onclick="jumpTo(42)">3. Rules, Limits & Comms</button>
+                <button class="scene-pill" onclick="jumpTo(64)">4. Mystery, Final Call & Sold</button>
+                <button class="scene-pill" onclick="jumpTo(84)">5. Scouting, Roster & AI</button>
+            </div>
+            <div class="note-bar">
+                <i class="fa-solid fa-circle-info" style="color:#d97706;"></i>
+                Captains-only detailed briefing • Export saves 60fps HD .webm with sound cues
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('videoCanvas');
+const ctx = canvas.getContext('2d');
+const W = 1920, H = 1080;
+const TOTAL_DURATION = 105; // 1m 45s detailed Captain walkthrough
+
+let currentTime = 0;
+let isPlaying = false;
+let lastFrameTime = null;
+let voiceEnabled = false;
+let lastSpokenScene = -1;
+
+// Web Audio SFX Engine
+let audioCtx = null;
+let audioDest = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+let isRecording = false;
+let lastSecondMark = -1;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        audioDest = audioCtx.createMediaStreamDestination();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, duration, type = 'sine', gainVal = 0.08) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    if (audioDest) gain.connect(audioDest);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+}
+
+function playChime(notes = [523.25, 659.25, 783.99]) {
+    notes.forEach((n, idx) => {
+        setTimeout(() => playTone(n, 0.25, 'triangle', 0.07), idx * 90);
+    });
+}
+
+// Detailed Captain-only Voiceover Scripts
+const SCENE_SCRIPTS = [
+    {
+        start: 0, end: 18,
+        text: "Welcome Captains to the Nexus Legends Auction Tour. Step one: tap Enter with Sound for music and live voice announcements of every bid. Next, run the one-time Asset Sync so player squad screenshots load with zero lag. Finally, select Captain, enter your official email and password, and verify using the six-digit OTP sent to your inbox."
+    },
+    {
+        start: 18, end: 42,
+        text: "Inside the Live Arena, the top news ticker tracks the biggest signing and highest purse. On stage, inspect the player's strength, card tier, and click any squad screenshot to zoom in full screen. You have twenty seconds per bid, and each new bid resets the timer to twenty. Use plus one, plus five, or plus ten million to bid, or Skip Round to opt out. Ghost Watch shows how many rival captains are actively hovering."
+    },
+    {
+        start: 42, end: 64,
+        text: "Every bid is protected by four server rules. First, your bid buttons lock while you are already the highest bidder. Second, you cannot bid more than your remaining purse. Third, once your squad reaches max capacity, bidding locks with Squad Full. Fourth, skipping a round locks bidding for that player only. On the right, monitor rival purses and use Official Comms to message Admins and Captains with live emoji reactions."
+    },
+    {
+        start: 64, end: 84,
+        text: "Be ready for special rounds. In Mystery Packs, the player stays hidden until Admin reveals them mid-bidding. During Final Call, the countdown escalates to Going once, Going twice, Sold—but placing a higher bid immediately cancels Final Call and restores the twenty-second clock. When sold, fireworks trigger, your purse deducts automatically, and unsold players rotate in the Accelerated Showcase."
+    },
+    {
+        start: 84, end: 105,
+        text: "Use the remaining tabs to outsmart rivals. In Market and Squads, click any franchise card to inspect every player they signed and prices paid, watch the Scarcity Map for flashing low-inventory alerts, and export a full PDF financial report. In Player Roster, search upcoming targets by name or tier. And in Public Lounge, type at-nexus richest or at-nexus squad to get instant AI intel."
+    }
+];
+
+const SUBTITLES = [
+    [0, 5.5, "CAPTAIN BRIEFING 1/5: Click 'Enter with Sound' to enable arena SFX & live Voice Bid Announcements."],
+    [5.5, 10.5, "One-time 'Download & Sync' caches all player screenshots (~5-10MB) for zero-lag bidding."],
+    [10.5, 18, "Click 'Captain' → enter Official Email & Password → Verify with your 6-digit Email OTP (valid 10 mins)."],
+    [18, 24.5, "LIVE ARENA: Top ticker tracks Top Signing & Highest Purse. Click any Squad Screenshot to Zoom full-screen."],
+    [24.5, 31.5, "Each bid resets the countdown to 20 seconds. Use +1M, +5M, +10M to bid, or SKIP ROUND to opt out."],
+    [31.5, 42, "Ghost Watch ('X Captains Hovering') shows how many rival Captains are actively focused on the player."],
+    [42, 47.5, "RULE 1 & 2: Buttons auto-disable while you're Highest Bidder, and bids exceeding your Purse are blocked."],
+    [47.5, 53.5, "RULE 3 & 4: Reaching Max Capacity locks your team ('SQUAD FULL'). Skipping locks that player round only."],
+    [53.5, 64, "RIGHT SIDEBAR: Track every rival's Purse & Squad Slots, and use Official Comms (Admins & Captains only)."],
+    [64, 70.5, "MYSTERY PACKS: Bid blind on '?' players until Admin clicks 'Reveal Player' mid-auction!"],
+    [70.5, 77, "FINAL CALL: 17s escalation ('Going once... Going twice...'). Tip: Any new bid cancels Final Call & resets 20s!"],
+    [77, 84, "SOLD OUT: Purse deducts automatically & player locks to squad. Unsold players appear in Showcase later."],
+    [84, 91.5, "MARKET & SQUADS: Click ANY Franchise card to inspect their signed squad, plus watch flashing Scarcity dots."],
+    [91.5, 98, "PLAYER ROSTER: Search upcoming targets by Name or Tier, check Base Value, & Export full PDF Reports."],
+    [98, 105, "PUBLIC LOUNGE: Ask '@nexus richest', '@nexus player', or '@nexus squad [team]' for instant AI intel!"]
+];
+
+const confettiPieces = Array.from({ length: 95 }, (_, i) => ({
+    angle: (i / 95) * Math.PI * 2 + (Math.random() * 0.25),
+    speed: 240 + Math.random() * 540,
+    size: 8 + Math.random() * 10,
+    color: ['#fbbf24', '#1d4ed8', '#38bdf8', '#f59e0b', '#ffffff', '#10b981'][i % 6],
+    rotSpeed: (Math.random() - 0.5) * 10
+}));
+
+const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+const easeOut = t => 1 - Math.pow(1 - clamp(t, 0, 1), 3);
+const lerp = (a, b, t) => a + (b - a) * clamp(t, 0, 1);
+
+function roundRect(x, y, w, h, r, fill, stroke, lineW = 2) {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, r);
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lineW; ctx.stroke(); }
+}
+
+function drawText(text, x, y, size, color, weight = '800', align = 'left', font = 'Inter') {
+    ctx.font = `${weight} ${size}px "${font}", sans-serif`;
+    ctx.fillStyle = color;
+    ctx.textAlign = align;
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x, y);
+}
+
+function drawCallout(x, y, w, h, title, desc, accent = '#1d4ed8') {
+    roundRect(x, y, w, h, 16, '#ffffff', accent, 2.5);
+    roundRect(x, y, 8, h, 4, accent, null);
+    drawText(title, x + 24, y + 26, 15, accent, '800', 'left');
+    drawText(desc, x + 24, y + 54, 15, '#334155', '600', 'left');
+}
+
+function drawCursor(x, y, clicking = false) {
+    ctx.save();
+    ctx.translate(x, y);
+    if (clicking) {
+        ctx.beginPath();
+        ctx.arc(0, 0, 28, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.9)';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, 32);
+    ctx.lineTo(9, 24);
+    ctx.lineTo(17, 38);
+    ctx.lineTo(23, 35);
+    ctx.lineTo(15, 21);
+    ctx.lineTo(26, 20);
+    ctx.closePath();
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = '#0f2b6d';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.restore();
+}
+
+function drawBackground(t) {
+    const grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, '#e8f1ff');
+    grad.addColorStop(0.5, '#ffffff');
+    grad.addColorStop(1, '#fff8e1');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.strokeStyle = 'rgba(29, 78, 216, 0.045)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 60) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = 0; y < H; y += 60) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    for (let i = 0; i < 10; i++) {
+        const bx = ((i * 220 + t * (10 + (i % 3) * 6)) % (W + 200)) - 100;
+        const by = 140 + ((i * 149) % 780) + Math.sin(t + i) * 18;
+        const r = 34 + (i % 3) * 20;
+        ctx.beginPath();
+        ctx.arc(bx, by, r, 0, Math.PI * 2);
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(29, 78, 216, 0.05)' : 'rgba(245, 158, 11, 0.07)';
+        ctx.fill();
+    }
+}
+
+function drawTopNav(activeTabIndex, tickerText = '🏆 TOP SIGNING: CRISTIANO TO ROYALS XI (185M)   •   💰 HIGHEST PURSE: TITANS FC (2,000M)   •   🔥 REMAINING PLAYERS: 24') {
+    const navGrad = ctx.createLinearGradient(0, 0, W, 0);
+    navGrad.addColorStop(0, '#0f2b6d');
+    navGrad.addColorStop(0.5, '#173d94');
+    navGrad.addColorStop(1, '#0f2b6d');
+    ctx.fillStyle = navGrad;
+    ctx.fillRect(0, 0, W, 82);
+    ctx.fillStyle = '#fbbf24';
+    ctx.fillRect(0, 80, W, 4);
+
+    roundRect(45, 18, 46, 46, 12, 'rgba(251,191,36,0.2)', '#fbbf24', 2);
+    drawText('👑', 68, 42, 24, '#fbbf24', '700', 'center');
+    drawText('NEXUS LEGENDS FC', 108, 34, 26, '#ffffff', '800', 'left', 'Rajdhani');
+    drawText('CAPTAIN COMMAND HANDBOOK', 108, 58, 11, '#fde68a', '700', 'left');
+
+    // Logged in badge on right
+    drawText('TITANS FC', 1730, 32, 16, '#ffffff', '800', 'right');
+    drawText('ROLE: CAPTAIN', 1730, 52, 11, '#fbbf24', '800', 'right');
+    roundRect(1755, 22, 115, 38, 10, 'rgba(255,255,255,0.12)', '#fbbf24', 1.5);
+    drawText('LOGOUT', 1812, 41, 12, '#ffffff', '800', 'center');
+
+    // Live News Ticker Bar
+    roundRect(45, 96, W - 90, 32, 10, '#0f2b6d', '#f59e0b', 1.5);
+    drawText(tickerText, W / 2, 112, 13, '#fde047', '800', 'center');
+
+    // Workspace Tabs Pill Bar
+    roundRect(460, 140, 1000, 56, 15, 'rgba(255,255,255,0.96)', 'rgba(29,78,216,0.2)', 2);
+    const tabs = ['1. LIVE ARENA', '2. MARKET & SQUADS', '3. PLAYER ROSTER', '4. PUBLIC LOUNGE'];
+    tabs.forEach((label, i) => {
+        const tx = 470 + i * 246;
+        if (i === activeTabIndex) {
+            const tg = ctx.createLinearGradient(tx, 0, tx + 238, 0);
+            tg.addColorStop(0, '#0f2b6d'); tg.addColorStop(0.7, '#1d4ed8'); tg.addColorStop(1, '#d97706');
+            roundRect(tx, 146, 238, 44, 11, tg, null);
+            drawText(label, tx + 119, 168, 14, '#ffffff', '800', 'center');
+        } else {
+            drawText(label, tx + 119, 168, 14, '#475569', '700', 'center');
+        }
+    });
+}
+
+function drawSubtitles(t) {
+    const sub = SUBTITLES.find(s => t >= s[0] && t < s[1]);
+    if (!sub) return;
+    roundRect(140, H - 92, W - 280, 66, 18, 'rgba(15, 23, 42, 0.91)', '#fbbf24', 2);
+    drawText(sub[2], W / 2, H - 59, 22, '#ffffff', '700', 'center');
+}
+
+// =========================================================
+// SCENE 1 (0s - 18s): CAPTAIN AUDIO, ASSET SYNC & 2FA LOGIN
+// =========================================================
+function drawScene1(t) {
+    // Executive Title Header
+    roundRect(680, 42, 560, 38, 19, '#0f2b6d', '#fbbf24', 2);
+    drawText('OFFICIAL CAPTAIN BRIEFING • PART 1 OF 5', W / 2, 61, 13, '#fde047', '800', 'center');
+    drawText('ONBOARDING & SECURE 2FA ACCESS', W / 2, 128, 56, '#0f2b6d', '800', 'center', 'Rajdhani');
+    const barG = ctx.createLinearGradient(W/2 - 140, 0, W/2 + 140, 0);
+    barG.addColorStop(0, '#1d4ed8'); barG.addColorStop(1, '#f59e0b');
+    roundRect(W / 2 - 140, 166, 280, 6, 3, barG, null);
+
+    // Step 1: Enter with Sound
+    const a1 = easeOut(t / 0.8);
+    ctx.save(); ctx.globalAlpha = a1;
+    roundRect(90, 220, 520, 660, 28, '#ffffff', '#f59e0b', 3);
+    roundRect(90, 220, 520, 64, 28, '#0f2b6d', null);
+    drawText('STEP 1 • AUDIO & VOICE ALERTS', 350, 252, 18, '#fde047', '800', 'center');
+
+    roundRect(305, 320, 90, 90, 45, '#1d4ed8', '#fbbf24', 3);
+    drawText('🔊', 350, 366, 38, '#ffffff', '700', 'center');
+    drawText('Audio Recommended', 350, 445, 26, '#0f2b6d', '800', 'center');
+    drawText('• Live Speech Voice announces every bid:', 135, 505, 17, '#334155', '700', 'left');
+    roundRect(135, 532, 430, 54, 12, '#eff6ff', '#bfdbfe', 1.5);
+    drawText('"Bid by Royals XI, 125 million"', 350, 559, 17, '#1d4ed8', '800', 'center');
+    drawText('• Countdown & Sold Fanfare SFX', 135, 618, 17, '#334155', '700', 'left');
+    drawText('• Mute/Unmute toggle at bottom-right', 135, 654, 17, '#334155', '700', 'left');
+
+    const btnG = ctx.createLinearGradient(150, 0, 550, 0);
+    btnG.addColorStop(0, '#1d4ed8'); btnG.addColorStop(1, '#f59e0b');
+    roundRect(150, 740, 400, 68, 18, btnG, null);
+    drawText('ENTER WITH SOUND', 350, 774, 20, '#ffffff', '800', 'center');
+    ctx.restore();
+
+    // Step 2: Asset Sync
+    const a2 = easeOut((t - 4.8) / 0.8);
+    ctx.save(); ctx.globalAlpha = a2;
+    roundRect(695, 220, 520, 660, 28, '#ffffff', '#1d4ed8', 3);
+    roundRect(695, 220, 520, 64, 28, '#1d4ed8', null);
+    drawText('STEP 2 • ONE-TIME ASSET SYNC', 955, 252, 18, '#ffffff', '800', 'center');
+
+    roundRect(910, 320, 90, 90, 45, '#eff6ff', '#1d4ed8', 3);
+    drawText('☁️', 955, 366, 38, '#1d4ed8', '700', 'center');
+    drawText('Assets Required (~5-10MB)', 955, 445, 24, '#0f2b6d', '800', 'center');
+    drawText('Pre-downloads all player screenshots', 955, 488, 17, '#475569', '600', 'center');
+    drawText('so cards open instantly in 20s rounds.', 955, 516, 17, '#475569', '600', 'center');
+
+    const syncProg = clamp((t - 6.2) / 3.2, 0, 1);
+    roundRect(755, 575, 400, 24, 12, '#e2e8f0', null);
+    roundRect(755, 575, 400 * syncProg, 24, 12, btnG, null);
+    drawText(`SYNCING VISUALS: ${Math.round(syncProg * 100)}%`, 955, 628, 16, '#1d4ed8', '800', 'center');
+
+    roundRect(755, 740, 400, 68, 18, syncProg >= 1 ? '#059669' : '#0f2b6d', null);
+    drawText(syncProg >= 1 ? '✓ SYNC COMPLETE' : 'DOWNLOAD & SYNC', 955, 774, 20, '#ffffff', '800', 'center');
+    ctx.restore();
+
+    // Step 3: Captain Login + 2FA OTP
+    const a3 = easeOut((t - 9.8) / 0.8);
+    ctx.save(); ctx.globalAlpha = a3;
+    roundRect(1300, 220, 530, 660, 28, '#fffbeb', '#d97706', 3);
+    roundRect(1300, 220, 530, 64, 28, '#d97706', null);
+    drawText('STEP 3 • CAPTAIN 2FA LOGIN', 1565, 252, 18, '#0f172a', '800', 'center');
+
+    roundRect(1355, 315, 200, 52, 14, '#e2e8f0', '#cbd5e1', 1.5);
+    drawText('Guest (Blocked)', 1455, 341, 14, '#64748b', '700', 'center');
+    roundRect(1575, 315, 200, 52, 14, '#0f2b6d', '#fbbf24', 2.5);
+    drawText('✓ CAPTAIN', 1675, 341, 16, '#fde047', '800', 'center');
+
+    drawText('OFFICIAL EMAIL (AUTO-LOWERCASE)', 1355, 402, 12, '#475569', '800', 'left');
+    roundRect(1355, 420, 420, 52, 12, '#ffffff', '#1d4ed8', 2);
+    drawText('titans.captain@nexus.com', 1375, 446, 17, '#0f2b6d', '700', 'left');
+
+    drawText('PASSWORD', 1355, 498, 12, '#475569', '800', 'left');
+    roundRect(1355, 516, 420, 52, 12, '#ffffff', '#1d4ed8', 2);
+    drawText('••••••••••••', 1375, 544, 20, '#0f2b6d', '800', 'left');
+
+    drawText('ENTER 6-DIGIT EMAIL OTP (EXPIRES 10 MIN)', 1565, 602, 13, '#b45309', '800', 'center');
+    const otp = ['7', '3', '9', '1', '0', '4'];
+    const shown = Math.floor(clamp((t - 12.2) * 2.5, 0, 6));
+    otp.forEach((d, i) => {
+        const dx = 1365 + i * 68;
+        roundRect(dx, 624, 56, 64, 12, '#ffffff', i < shown ? '#1d4ed8' : '#cbd5e1', 2);
+        if (i < shown) drawText(d, dx + 28, 656, 28, '#0f2b6d', '800', 'center');
+    });
+
+    roundRect(1355, 740, 420, 68, 18, btnG, null);
+    drawText('VERIFY & ENTER ARENA', 1565, 774, 20, '#ffffff', '800', 'center');
+    ctx.restore();
+
+    // Animated Cursor
+    let cx = 350, cy = 774, clicking = false;
+    if (t < 4.5) { cx = lerp(220, 350, t / 2.5); cy = lerp(840, 774, t / 2.5); clicking = t > 3.2 && t < 3.7; }
+    else if (t < 9.8) { cx = lerp(350, 955, (t - 4.5) / 1.8); cy = 774; clicking = t > 6.0 && t < 6.4; }
+    else { cx = lerp(955, 1565, (t - 9.8) / 2.2); cy = 774; clicking = t > 15.8 && t < 16.4; }
+    drawCursor(cx, cy, clicking);
+}
+
+// =========================================================
+// SCENE 2 (18s - 42s): LIVE ARENA & BIDDING CONTROLS
+// =========================================================
+function drawScene2(t) {
+    const localT = t - 18;
+    drawTopNav(0);
+
+    // Stage Card
+    roundRect(45, 212, 1245, 735, 28, '#ffffff', 'rgba(29,78,216,0.2)', 2);
+    const pulse = (Math.sin(t * 6) + 1) * 0.5;
+    ctx.beginPath(); ctx.arc(90, 250, 8, 0, Math.PI * 2); ctx.fillStyle = '#dc2626'; ctx.fill();
+    ctx.beginPath(); ctx.arc(90, 250, 10 + pulse * 8, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(220,38,38,0.45)'; ctx.lineWidth = 2; ctx.stroke();
+    drawText('LIVE AUCTION BLOCK', 115, 250, 15, '#0f2b6d', '800', 'left');
+    roundRect(1020, 232, 235, 36, 18, '#fef3c7', '#f59e0b', 1.5);
+    drawText('TIER THEME: BIG TIME', 1137, 250, 12, '#b45309', '800', 'center');
+
+    // Bid progression simulation
+    let bidAmt = 120, bidder = 'ROYALS XI', secLeft = 20 - Math.floor(localT % 6);
+    if (localT > 6.0) { bidAmt = 125; bidder = 'TITANS FC'; }
+    if (localT > 12.5) { bidAmt = 135; bidder = 'BLITZ FC'; }
+    if (localT > 17.5) { bidAmt = 136; bidder = 'TITANS FC'; }
+
+    // 20s Progress Bar
+    roundRect(95, 286, 1145, 14, 7, '#e2e8f0', null);
+    roundRect(95, 286, (secLeft / 20) * 1145, 14, 7, '#dc2626', null);
+
+    // Player Card
+    const cardGrad = ctx.createLinearGradient(95, 330, 365, 675);
+    cardGrad.addColorStop(0, '#0b2259'); cardGrad.addColorStop(0.6, '#1d4ed8'); cardGrad.addColorStop(1, '#0f2b6d');
+    roundRect(95, 330, 270, 345, 26, cardGrad, '#fbbf24', 4);
+    drawText('STR 3325', 230, 385, 36, '#fde047', '800', 'center', 'Rajdhani');
+    drawText('L. MESSI', 230, 500, 42, '#fde047', '800', 'center', 'Rajdhani');
+    roundRect(150, 600, 160, 38, 19, '#fbbf24', null);
+    drawText('BIG TIME', 230, 619, 15, '#0f172a', '800', 'center');
+
+    // Screenshot + Zoom interaction demo
+    roundRect(395, 340, 430, 255, 22, '#0f172a', '#cbd5e1', 3);
+    drawText('TEAM SQUAD SCREENSHOT', 610, 440, 20, '#38bdf8', '800', 'center');
+    drawText('Strength 3325 • Formation 4-2-1-3', 610, 476, 15, '#94a3b8', '600', 'center');
+    roundRect(495, 535, 230, 38, 12, 'rgba(251,191,36,0.2)', '#fbbf24', 1.5);
+    drawText('🔍 TAP TO ZOOM IN', 610, 554, 13, '#fde047', '800', 'center');
+
+    // Evaluation Box
+    const evGrad = ctx.createLinearGradient(855, 330, 1245, 540);
+    evGrad.addColorStop(0, '#0f2b6d'); evGrad.addColorStop(1, '#1e40af');
+    roundRect(855, 330, 390, 205, 24, evGrad, '#f59e0b', 3);
+    drawText('CURRENT EVALUATION', 888, 366, 13, '#cbd5e1', '800', 'left');
+    drawText(`${bidAmt}`, 888, 430, 74, '#ffffff', '800', 'left', 'Rajdhani');
+    drawText('M', 1015, 443, 28, '#38bdf8', '800', 'left');
+    drawText(bidder, 888, 498, 25, '#fde047', '800', 'left');
+
+    // Timer Pill + Ghost Watch
+    roundRect(855, 555, 235, 46, 23, '#ffe4e6', '#ef4444', 2);
+    drawText(`⏱ ENDS IN ${secLeft}S`, 972, 578, 17, '#dc2626', '800', 'center');
+
+    roundRect(855, 616, 310, 44, 22, '#fef3c7', '#f59e0b', 2);
+    drawText('👁️ 5 CAPTAINS HOVERING', 1010, 638, 13, '#92400e', '800', 'center');
+    drawText('Live rival interest detector!', 1010, 678, 13, '#64748b', '700', 'center');
+
+    // Captain Controls
+    const isSelfHighest = bidder === 'TITANS FC';
+    drawText(isSelfHighest ? 'YOU ARE HIGHEST BIDDER — BUTTONS LOCKED' : 'YOUR TURN TO BID — CLICK AN INCREMENT', 665, 720, 14, isSelfHighest ? '#d97706' : '#1d4ed8', '800', 'center');
+
+    const btnAlpha = isSelfHighest ? 0.35 : 1;
+    ctx.save(); ctx.globalAlpha = btnAlpha;
+    roundRect(190, 748, 290, 78, 18, '#0f2b6d', '#1d4ed8', 2);
+    drawText('+1M', 335, 787, 26, '#ffffff', '800', 'center');
+    roundRect(520, 748, 290, 78, 18, '#f59e0b', '#d97706', 2);
+    drawText('+5M', 665, 787, 26, '#0f172a', '800', 'center');
+    roundRect(850, 748, 290, 78, 18, '#f59e0b', '#d97706', 2);
+    drawText('+10M', 995, 787, 26, '#0f172a', '800', 'center');
+    roundRect(190, 845, 950, 56, 16, '#fef2f2', '#ef4444', 2);
+    drawText('SKIP ROUND (LOCKS YOUR TEAM FOR THIS PLAYER ONLY)', 665, 873, 15, '#dc2626', '800', 'center');
+    ctx.restore();
+
+    // Right Column Summary
+    roundRect(1315, 212, 560, 735, 28, '#ffffff', 'rgba(29,78,216,0.2)', 2);
+    drawText('CAPTAIN LIVE CHECKLIST', 1350, 255, 20, '#0f2b6d', '800', 'left');
+    drawCallout(1345, 295, 500, 92, '1. CLICK SCREENSHOT TO ZOOM', 'Inspect full squad stats & player build clearly.', '#1d4ed8');
+    drawCallout(1345, 405, 500, 92, '2. 20-SECOND SHOT CLOCK', 'Every valid bid resets the countdown to 20s.', '#dc2626');
+    drawCallout(1345, 515, 500, 92, '3. GHOST WATCH RADAR', 'Shows how many Captains are hovering on the block.', '#d97706');
+    drawCallout(1345, 625, 500, 92, '4. VOICE BID ALERTS', 'Hear every team bid aloud even if looking away.', '#059669');
+    drawCallout(1345, 735, 500, 92, '5. +1M / +5M / +10M / SKIP', 'Instant server validation prevents over-bidding.', '#0f2b6d');
+
+    // Zoom modal preview between 2.2s and 5.0s
+    if (localT > 2.2 && localT < 5.0) {
+        ctx.fillStyle = 'rgba(15, 43, 109, 0.8)';
+        ctx.fillRect(45, 212, 1245, 735);
+        roundRect(220, 280, 890, 520, 26, '#0f172a', '#fbbf24', 4);
+        drawText('🔍 FULL-SCREEN SQUAD SCREENSHOT ZOOM', 665, 345, 24, '#fde047', '800', 'center');
+        drawText('Detailed Player Stats • Boosters • Skill Slots • OVR 3325', 665, 515, 24, '#ffffff', '700', 'center');
+        drawText('Tap anywhere outside to close', 665, 745, 16, '#93c5fd', '700', 'center');
+    }
+
+    // Cursor animation
+    let cx = 610, cy = 480, click = false;
+    if (localT < 5.2) { cx = 610; cy = 480; click = localT > 1.9 && localT < 2.3; }
+    else if (localT < 11) { cx = lerp(610, 665, (localT - 5.2) / 1.5); cy = lerp(480, 787, (localT - 5.2) / 1.5); click = localT > 5.7 && localT < 6.2; }
+    else { cx = lerp(665, 335, (localT - 11) / 3); cy = 787; click = localT > 17.2 && localT < 17.7; }
+    drawCursor(cx, cy, click);
+}
+
+// =========================================================
+// SCENE 3 (42s - 64s): RULES, LIMITS, PURSES & OFFICIAL COMMS
+// =========================================================
+function drawScene3(t) {
+    const localT = t - 42;
+    drawTopNav(0);
+
+    // Left: 4 Server-Enforced Captain Rules
+    drawText('SERVER-ENFORCED CAPTAIN RULES & PROTECTIONS', 60, 232, 26, '#0f2b6d', '800', 'left', 'Rajdhani');
+
+    const rules = [
+        {
+            title: 'RULE 1 • NO SELF-OUTBIDDING',
+            badge: 'AUTO-LOCKED',
+            color: '#1d4ed8',
+            line1: 'When YOUR team is Highest Bidder, +1M / +5M / +10M & SKIP disable automatically.',
+            line2: 'Prevents accidentally raising your own bid price.'
+        },
+        {
+            title: 'RULE 2 • BUDGET GUARD',
+            badge: 'PURSE CHECK',
+            color: '#059669',
+            line1: 'Server checks (Remaining Purse >= New Bid) on every click.',
+            line2: 'You cannot bid money your franchise does not have.'
+        },
+        {
+            title: 'RULE 3 • SQUAD CAPACITY LIMIT',
+            badge: 'SQUAD FULL',
+            color: '#dc2626',
+            line1: 'Each team has a Max Capacity (e.g., 10 / 10 players).',
+            line2: 'Once full, card turns RED and server blocks all further bids.'
+        },
+        {
+            title: 'RULE 4 • SKIP ROUND LOCK',
+            badge: 'CONFIRMATION',
+            color: '#d97706',
+            line1: 'Clicking SKIP ROUND asks "Skip this round?" then locks your buttons.',
+            line2: 'System announces your skip in chat; re-entry is blocked for that player.'
+        }
+    ];
+
+    rules.forEach((r, i) => {
+        const a = easeOut((localT - i * 1.4) / 0.6);
+        const ry = 268 + i * 168;
+        ctx.save(); ctx.globalAlpha = a;
+        roundRect(60, ry, 1180, 146, 22, '#ffffff', r.color, 2.5);
+        roundRect(60, ry, 12, 146, 6, r.color, null);
+        drawText(r.title, 98, ry + 36, 22, '#0f2b6d', '800', 'left');
+        roundRect(1020, ry + 20, 190, 34, 17, r.color, null);
+        drawText(r.badge, 1115, ry + 37, 13, '#ffffff', '800', 'center');
+        drawText(r.line1, 98, ry + 80, 18, '#1e293b', '700', 'left');
+        drawText(r.line2, 98, ry + 114, 16, '#64748b', '600', 'left');
+        ctx.restore();
+    });
+
+    // Right Column: Live Purses + Official Comms
+    roundRect(1280, 215, 590, 345, 26, '#ffffff', '#1d4ed8', 2.5);
+    roundRect(1280, 215, 590, 56, 26, '#0f2b6d', null);
+    drawText('LIVE FRANCHISE PURSES & SLOTS', 1315, 243, 18, '#ffffff', '800', 'left');
+
+    const teams = [
+        { name: 'TITANS FC', m: '1,420M', cnt: 7, max: 10, full: false },
+        { name: 'ROYALS XI', m: '980M', cnt: 8, max: 10, full: false },
+        { name: 'APEX UNITED', m: '340M', cnt: 10, max: 10, full: true }
+    ];
+    teams.forEach((tm, idx) => {
+        const ty = 290 + idx * 86;
+        roundRect(1305, ty, 540, 74, 14, tm.full ? '#fef2f2' : '#f8fafc', tm.full ? '#dc2626' : '#cbd5e1', 1.5);
+        drawText(tm.name, 1328, ty + 24, 18, '#0f2b6d', '800', 'left');
+        drawText(tm.m, 1820, ty + 24, 22, '#d97706', '800', 'right');
+        drawText(`Squad: ${tm.cnt} / ${tm.max}${tm.full ? ' — SQUAD FULL!' : ''}`, 1328, ty + 52, 13, tm.full ? '#dc2626' : '#475569', '800', 'left');
+        roundRect(1560, ty + 47, 260, 8, 4, '#e2e8f0', null);
+        roundRect(1560, ty + 47, 260 * (tm.cnt / tm.max), 8, 4, tm.full ? '#dc2626' : '#1d4ed8', null);
+    });
+
+    // Official Comms Panel (Admin & Captains Only)
+    roundRect(1280, 580, 590, 365, 26, '#ffffff', '#f59e0b', 2.5);
+    roundRect(1280, 580, 590, 54, 26, '#eff6ff', null);
+    drawText('OFFICIAL COMMS (CAPTAINS & ADMINS ONLY)', 1310, 607, 16, '#0f2b6d', '800', 'left');
+
+    roundRect(1305, 650, 440, 54, 16, '#f1f5f9', '#cbd5e1', 1);
+    drawText('SYSTEM [ADMIN]: ⚠️ Titans FC skipped round.', 1325, 677, 15, '#1e293b', '700', 'left');
+
+    if (localT > 9.0) {
+        roundRect(1425, 720, 420, 54, 16, '#dbeafe', '#93c5fd', 1.5);
+        drawText('TITANS FC: Saving budget for Epic GK! 💪', 1445, 747, 15, '#0f2b6d', '700', 'left');
+    }
+
+    roundRect(1305, 868, 540, 54, 16, '#f8fafc', '#1d4ed8', 1.5);
+    drawText('Captains can chat & send 🔥👏😂❤️😮 reactions', 1330, 895, 15, '#475569', '700', 'left');
+    roundRect(1788, 875, 44, 40, 12, '#1d4ed8', null);
+    drawText('➤', 1810, 895, 18, '#ffffff', '800', 'center');
+
+    // Flying reaction in Official Comms
+    if (localT > 12) {
+        const ft = (localT - 12) % 3;
+        drawText('🔥', 1780 + Math.sin(ft * 4) * 20, 840 - ft * 90, 34, '#000', '700', 'center');
+    }
+}
+
+// =========================================================
+// SCENE 4 (64s - 84s): MYSTERY PACK, FINAL CALL & SOLD OUT
+// =========================================================
+function drawScene4(t) {
+    const localT = t - 64;
+    drawTopNav(0);
+
+    if (localT < 6.5) {
+        roundRect(140, 215, 1640, 725, 32, '#ffffff', '#1d4ed8', 3);
+        drawText('SPECIAL EVENT 1: MYSTERY PACK (BLIND BIDDING)', W / 2, 275, 28, '#0f2b6d', '800', 'center');
+
+        const revealed = localT > 3.6;
+        const sc = 1 + Math.sin(localT * 7) * 0.025;
+        ctx.save();
+        ctx.translate(540, 575);
+        ctx.scale(sc, sc);
+        if (!revealed) {
+            roundRect(-190, -230, 380, 460, 32, '#0f2b6d', '#fbbf24', 5);
+            drawText('?', 0, -25, 170, '#fde047', '800', 'center', 'Rajdhani');
+            drawText('IDENTITY CLASSIFIED', 0, 160, 20, '#38bdf8', '800', 'center');
+        } else {
+            const g = ctx.createLinearGradient(-190, -230, 190, 230);
+            g.addColorStop(0, '#0b2259'); g.addColorStop(1, '#1d4ed8');
+            roundRect(-190, -230, 380, 460, 32, g, '#fbbf24', 5);
+            drawText('🔓 REVEALED LIVE!', 0, -170, 20, '#10b981', '800', 'center');
+            drawText('STR 3335', 0, -80, 48, '#fde047', '800', 'center', 'Rajdhani');
+            drawText('CRISTIANO', 0, 15, 48, '#ffffff', '800', 'center', 'Rajdhani');
+            roundRect(-100, 125, 200, 44, 22, '#fbbf24', null);
+            drawText('BIG TIME', 0, 147, 17, '#0f172a', '800', 'center');
+        }
+        ctx.restore();
+
+        drawCallout(920, 370, 760, 110, 'BLIND STRATEGY', 'Bidding works normally while card & screenshot are locked.', '#1d4ed8');
+        drawCallout(920, 510, 760, 110, 'MID-ROUND REVEAL', 'Admin can reveal the Legend anytime while bidding continues!', '#059669');
+        drawCallout(920, 650, 760, 110, 'HIGH RISK, HIGH REWARD', 'Lock a low bid early before rivals know who is inside.', '#d97706');
+    } else if (localT < 13.5) {
+        roundRect(140, 215, 1640, 725, 32, '#ffffff', '#f59e0b', 4);
+        drawText('SPECIAL EVENT 2: FINAL CALL (17s ESCALATION)', W / 2, 275, 28, '#b45309', '800', 'center');
+
+        const fcT = localT - 6.5;
+        const resetTriggered = fcT > 4.2;
+        if (!resetTriggered) {
+            const phrase = fcT < 1.5 ? 'ARE THERE ANY FURTHER BIDS?' : fcT < 3.0 ? 'FOR THE FIRST TIME...' : 'GOING ONCE... GOING TWICE...';
+            roundRect(240, 340, 1440, 200, 28, '#fef3c7', '#f59e0b', 4);
+            drawText('FINAL CALL FOR ROYALS XI', W / 2, 395, 22, '#b45309', '800', 'center');
+            drawText(phrase, W / 2, 465, 62, '#b45309', '800', 'center', 'Rajdhani');
+        } else {
+            roundRect(240, 340, 1440, 200, 28, '#ecfdf5', '#059669', 4);
+            drawText('NEW BID PLACED BY TITANS FC (+5M)!', W / 2, 395, 22, '#047857', '800', 'center');
+            drawText('FINAL CALL CANCELLED → TIMER RESET TO 20S!', W / 2, 465, 52, '#047857', '800', 'center', 'Rajdhani');
+        }
+
+        roundRect(440, 600, 1040, 230, 26, '#0f2b6d', '#fbbf24', 3);
+        drawText('PRO CAPTAIN TIP', W / 2, 650, 18, '#fde047', '800', 'center');
+        drawText('Waiting until "Going twice..."? Placing ANY valid bid', W / 2, 710, 24, '#ffffff', '700', 'center');
+        drawText('immediately cancels Final Call and restores the 20s clock!', W / 2, 755, 24, '#38bdf8', '800', 'center');
+
+        drawCursor(lerp(600, 960, fcT / 4), lerp(780, 600, fcT / 4), fcT > 4.0 && fcT < 4.5);
+    } else {
+        // SOLD OUT FLASHCARD + UNSOLD NOTE
+        ctx.fillStyle = 'rgba(15, 43, 109, 0.85)';
+        ctx.fillRect(0, 84, W, H - 84);
+
+        const cTime = localT - 13.5;
+        confettiPieces.forEach(c => {
+            const dist = cTime * c.speed;
+            const px = 650 + Math.cos(c.angle) * dist;
+            const py = 520 + Math.sin(c.angle) * dist + 140 * cTime * cTime;
+            ctx.save(); ctx.translate(px, py); ctx.rotate(cTime * c.rotSpeed);
+            ctx.fillStyle = c.color; ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size * 0.6);
+            ctx.restore();
+        });
+
+        roundRect(410, 230, 480, 650, 40, '#fbbf24', '#ffffff', 4);
+        roundRect(422, 242, 456, 626, 34, '#0f2b6d', null);
+        roundRect(540, 285, 220, 42, 21, '#fde047', null);
+        drawText('SOLD OUT', 650, 306, 18, '#0f2b6d', '800', 'center');
+        ctx.beginPath(); ctx.arc(650, 435, 95, 0, Math.PI * 2); ctx.fillStyle = '#1e3a8a'; ctx.fill();
+        ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 5; ctx.stroke();
+        drawText('⚽', 650, 435, 76, '#ffffff', '700', 'center');
+        drawText('CRISTIANO', 650, 575, 42, '#ffffff', '800', 'center', 'Rajdhani');
+        drawText('★ 3335  |  BIG TIME', 650, 620, 18, '#fde047', '800', 'center');
+        roundRect(422, 680, 456, 188, 28, '#f59e0b', null);
+        drawText('NEW FRANCHISE SIGNEE', 650, 715, 14, '#0f2b6d', '800', 'center');
+        drawText('TITANS FC', 650, 755, 36, '#0f2b6d', '800', 'center', 'Rajdhani');
+        roundRect(510, 790, 280, 46, 14, '#0f2b6d', null);
+        drawText('185 M', 650, 813, 24, '#fde047', '800', 'center');
+
+        // Side explanation for Captains
+        drawCallout(980, 310, 780, 120, 'AUTOMATIC SETTLEMENT', 'Purse deducts instantly & squad slot increases for all viewers.', '#fbbf24');
+        drawCallout(980, 460, 780, 120, 'TAP OUTSIDE TO CLOSE', 'Click anywhere outside the gold card to return to Live Arena.', '#38bdf8');
+        drawCallout(980, 610, 780, 130, 'IF UNSOLD → ACCELERATED SHOWCASE', 'Admin can run a 5s rotating gallery of Unsold players for re-entry!', '#f59e0b');
+    }
+}
+
+// =========================================================
+// SCENE 5 (84s - 105s): MARKET SCOUTING, ROSTER & @NEXUS AI
+// =========================================================
+function drawScene5(t) {
+    const localT = t - 84;
+    const step = localT < 8.0 ? 1 : localT < 14.5 ? 2 : 3;
+    drawTopNav(step);
+
+    if (step === 1) {
+        // Market & Squads
+        roundRect(65, 220, 870, 705, 26, '#ffffff', '#1d4ed8', 2.5);
+        drawText('RIVAL SCOUTING: FRANCHISE SQUAD MONITOR', 100, 265, 20, '#0f2b6d', '800', 'left');
+        const sqs = ['TITANS FC (7/10)', 'ROYALS XI (8/10)', 'APEX UTD (10/10)'];
+        sqs.forEach((s, i) => {
+            roundRect(100 + i * 270, 305, 250, 96, 16, i === 2 ? '#fef2f2' : '#f8fafc', i === 2 ? '#dc2626' : '#1d4ed8', 2);
+            drawText(s.split(' (')[0], 120 + i * 270, 338, 17, '#0f2b6d', '800', 'left');
+            drawText(s.split('(')[1].replace(')', ''), 120 + i * 270, 372, 16, i === 2 ? '#dc2626' : '#d97706', '800', 'left');
+        });
+
+        // Squad Modal Popup
+        roundRect(100, 435, 800, 275, 22, '#0f2b6d', '#fbbf24', 3);
+        drawText('CLICKED ROYALS XI → SIGNED SQUAD INSPECTION', 135, 480, 19, '#fde047', '800', 'left');
+        drawText('1. K. MBAPPE      |   STR 3310   |   BIG TIME   |   170M', 135, 540, 19, '#ffffff', '700', 'left');
+        drawText('2. J. BELLINGHAM  |   STR 3285   |   EPIC       |   95M', 135, 590, 19, '#ffffff', '700', 'left');
+        drawText('3. V. VAN DIJK    |   STR 3260   |   EPIC       |   80M', 135, 640, 19, '#ffffff', '700', 'left');
+
+        // Scarcity Map
+        roundRect(100, 735, 800, 160, 20, '#fffbeb', '#f59e0b', 2);
+        drawText('LIVE SCARCITY MAP (DOTS FLASH WHEN ≤ 3 LEFT IN A TIER!)', 130, 770, 16, '#b45309', '800', 'left');
+        drawText('BIG TIME:', 130, 815, 14, '#0f2b6d', '800', 'left');
+        for (let d = 0; d < 12; d++) {
+            const flash = d < 2 && Math.sin(localT * 10) > 0;
+            roundRect(235 + d * 28, 804, 20, 20, 4, d < 2 ? (flash ? '#dc2626' : '#f59e0b') : '#e2e8f0', null);
+        }
+        drawText('2 LEFT — FLASHING!', 590, 815, 13, '#dc2626', '800', 'left');
+        drawText('EPIC:', 130, 855, 14, '#0f2b6d', '800', 'left');
+        for (let d = 0; d < 12; d++) roundRect(235 + d * 28, 844, 20, 20, 4, d < 7 ? '#1d4ed8' : '#e2e8f0', null);
+
+        // Right: Market Chart + PDF Export
+        roundRect(965, 220, 890, 705, 26, '#ffffff', '#d97706', 2.5);
+        drawText('MARKET PRICE INDEX & FINANCIAL PDF', 1005, 265, 20, '#0f2b6d', '800', 'left');
+        const pts = [50, 75, 65, 110, 95, 145, 185, 175];
+        ctx.beginPath();
+        pts.forEach((v, i) => {
+            const px = 1030 + i * 105, py = 680 - v * 1.6;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        });
+        ctx.strokeStyle = '#059669'; ctx.lineWidth = 6; ctx.stroke();
+        drawText('BULLISH MARKET ▲', 1805, 315, 16, '#059669', '800', 'right');
+
+        roundRect(1040, 760, 740, 86, 18, '#0f2b6d', '#fbbf24', 3);
+        drawText('📄 DOWNLOAD FINANCIAL REPORT (MULTI-PAGE PDF)', 1410, 803, 20, '#fde047', '800', 'center');
+    } else if (step === 2) {
+        // Player Roster Search
+        roundRect(70, 220, 1780, 705, 28, '#ffffff', '#1d4ed8', 2.5);
+        roundRect(70, 220, 1780, 80, 28, '#0f2b6d', null);
+        drawText('PLAYER ROSTER — SCOUT TARGETS BEFORE THEY HIT THE BLOCK', 110, 260, 22, '#ffffff', '800', 'left');
+        roundRect(1180, 236, 420, 48, 12, '#ffffff', '#fbbf24', 2);
+        drawText('🔍 Search: "EPIC" or "NEYMAR"', 1205, 260, 17, '#0f2b6d', '700', 'left');
+        roundRect(1625, 236, 195, 48, 12, '#fbbf24', null);
+        drawText('EXPORT PDF', 1722, 260, 15, '#0f172a', '800', 'center');
+
+        const rows = [
+            ['NEYMAR JR', '3290', 'EPIC', 'AVAILABLE', '10 M Base'],
+            ['M. SALAH', '3275', 'EPIC', 'UNSOLD', '10 M Base'],
+            ['V. VAN DIJK', '3260', 'EPIC', 'SOLD', 'ROYALS XI (80M)'],
+            ['K. DE BRUYNE', '3255', 'EPIC', 'AVAILABLE', '10 M Base']
+        ];
+        rows.forEach((r, i) => {
+            const ry = 340 + i * 120;
+            roundRect(110, ry, 1700, 96, 16, i % 2 === 0 ? '#f8fafc' : '#ffffff', '#e2e8f0', 1.5);
+            drawText(r[0], 150, ry + 48, 24, '#0f2b6d', '800', 'left');
+            drawText(`★ ${r[1]}`, 520, ry + 48, 22, '#475569', '700', 'left');
+            roundRect(760, ry + 26, 150, 44, 10, '#eff6ff', '#bfdbfe', 1.5);
+            drawText(r[2], 835, ry + 48, 16, '#1d4ed8', '800', 'center');
+            const stCol = r[3] === 'SOLD' ? '#dc2626' : r[3] === 'UNSOLD' ? '#d97706' : '#059669';
+            drawText(r[3], 1120, ry + 48, 20, stCol, '800', 'center');
+            drawText(r[4], 1520, ry + 48, 22, '#0f2b6d', '800', 'center');
+        });
+    } else {
+        // Public Lounge & @nexus AI Commands + Finale
+        roundRect(220, 220, 1480, 695, 30, '#fffbeb', '#f59e0b', 3);
+        roundRect(220, 220, 1480, 70, 30, '#fef3c7', null);
+        drawText('🌍 PUBLIC LOUNGE — @NEXUS AI ASSISTANT & LIVE REACTIONS', 265, 255, 20, '#92400e', '800', 'left');
+
+        roundRect(275, 325, 600, 68, 18, '#dbeafe', '#93c5fd', 2);
+        drawText('CAPTAIN: @nexus richest', 310, 359, 21, '#0f2b6d', '800', 'left');
+        roundRect(275, 415, 920, 76, 18, '#0f2b6d', '#fbbf24', 2);
+        drawText('🤖 NEXUS AI: 💰 FINANCIAL LEADER: TITANS FC has 1,420M.', 310, 453, 20, '#ffffff', '700', 'left');
+
+        roundRect(275, 520, 660, 68, 18, '#dbeafe', '#93c5fd', 2);
+        drawText('CAPTAIN: @nexus squad royals', 310, 554, 21, '#0f2b6d', '800', 'left');
+        roundRect(275, 610, 920, 76, 18, '#0f2b6d', '#fbbf24', 2);
+        drawText('🤖 NEXUS AI: 📊 SQUAD CHECK: ROYALS XI has signed 8/10 players.', 310, 648, 20, '#ffffff', '700', 'left');
+
+        drawText('Also try: @nexus player  |  Send 🔥👏😂❤️ flying reactions!', 960, 765, 22, '#b45309', '800', 'center');
+
+        if (localT > 18.2) {
+            const fade = easeOut((localT - 18.2) / 0.8);
+            ctx.save(); ctx.globalAlpha = fade;
+            const fg = ctx.createLinearGradient(0, 0, W, H);
+            fg.addColorStop(0, '#0f2b6d'); fg.addColorStop(1, '#1e3a8a');
+            ctx.fillStyle = fg; ctx.fillRect(0, 0, W, H);
+            drawText('👑 GOOD LUCK, CAPTAINS!', W / 2, H / 2 - 50, 82, '#ffffff', '800', 'center', 'Rajdhani');
+            drawText('BUILD YOUR CHAMPIONSHIP SQUAD ON NEXUS LEGENDS FC', W / 2, H / 2 + 35, 28, '#fbbf24', '800', 'center');
+            ctx.restore();
+        }
+    }
+}
+
+// =========================================================
+// RENDER LOOP & CONTROLS
+// =========================================================
+function renderFrame(t) {
+    drawBackground(t);
+    if (t < 18) drawScene1(t);
+    else if (t < 42) drawScene2(t);
+    else if (t < 64) drawScene3(t);
+    else if (t < 84) drawScene4(t);
+    else drawScene5(t);
+
+    drawSubtitles(t);
+    updateUI(t);
+}
+
+function updateUI(t) {
+    const mins = String(Math.floor(t / 60)).padStart(2, '0');
+    const secs = String(Math.floor(t % 60)).padStart(2, '0');
+    document.getElementById('timeLabel').innerText = `${mins}:${secs} / 01:45`;
+    document.getElementById('scrubber').value = t;
+
+    const pills = document.querySelectorAll('.scene-pill');
+    const activeIdx = t < 18 ? 0 : t < 42 ? 1 : t < 64 ? 2 : t < 84 ? 3 : 4;
+    pills.forEach((p, i) => p.classList.toggle('active', i === activeIdx));
+
+    const sec = Math.floor(t);
+    if (isPlaying && sec !== lastSecondMark) {
+        lastSecondMark = sec;
+        if ([0, 18, 42, 64, 84].includes(sec)) playChime();
+        if (sec === 78) playChime([523.25, 659.25, 783.99, 1046.5]); // Sold fanfare!
+    }
+
+    if (isPlaying && voiceEnabled && activeIdx !== lastSpokenScene) {
+        lastSpokenScene = activeIdx;
+        speakScene(activeIdx);
+    }
+}
+
+function speakScene(idx) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(SCENE_SCRIPTS[idx].text);
+    u.rate = 1.03;
+    u.pitch = 1.0;
+    window.speechSynthesis.speak(u);
+}
+
+function loop(now) {
+    if (!isPlaying) return;
+    if (lastFrameTime === null) lastFrameTime = now;
+    const dt = (now - lastFrameTime) / 1000;
+    lastFrameTime = now;
+
+    currentTime += dt;
+    if (currentTime >= TOTAL_DURATION) {
+        currentTime = TOTAL_DURATION;
+        renderFrame(currentTime);
+        stopPlaying();
+        if (isRecording) finishExport();
+        return;
+    }
+
+    renderFrame(currentTime);
+    requestAnimationFrame(loop);
+}
+
+function togglePlay() {
+    initAudio();
+    if (isPlaying) stopPlaying();
+    else startPlaying();
+}
+
+function startPlaying() {
+    isPlaying = true;
+    lastFrameTime = null;
+    if (currentTime >= TOTAL_DURATION) currentTime = 0;
+    document.getElementById('playBtn').innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+    requestAnimationFrame(loop);
+}
+
+function stopPlaying() {
+    isPlaying = false;
+    lastFrameTime = null;
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    document.getElementById('playBtn').innerHTML = '<i class="fa-solid fa-play"></i> Play';
+}
+
+function restartVideo() {
+    initAudio();
+    currentTime = 0;
+    lastSpokenScene = -1;
+    lastSecondMark = -1;
+    startPlaying();
+}
+
+function jumpTo(sec) {
+    initAudio();
+    currentTime = sec;
+    lastSpokenScene = -1;
+    lastSecondMark = -1;
+    renderFrame(currentTime);
+    if (isPlaying && voiceEnabled) {
+        const idx = sec < 18 ? 0 : sec < 42 ? 1 : sec < 64 ? 2 : sec < 84 ? 3 : 4;
+        lastSpokenScene = idx;
+        speakScene(idx);
+    }
+}
+
+function seekVideo(val) {
+    currentTime = parseFloat(val);
+    lastSpokenScene = -1;
+    renderFrame(currentTime);
+}
+
+function toggleVoiceover() {
+    voiceEnabled = !voiceEnabled;
+    const btn = document.getElementById('voiceBtn');
+    btn.classList.toggle('active', voiceEnabled);
+    btn.innerHTML = voiceEnabled
+        ? '<i class="fa-solid fa-microphone"></i> Voiceover: ON'
+        : '<i class="fa-solid fa-microphone-slash"></i> Voiceover: OFF';
+    if (!voiceEnabled && window.speechSynthesis) window.speechSynthesis.cancel();
+    else if (isPlaying) {
+        lastSpokenScene = -1;
+        updateUI(currentTime);
+    }
+}
+
+function toggleExportVideo() {
+    if (isRecording) {
+        finishExport();
+        return;
+    }
+    initAudio();
+    const canvasStream = canvas.captureStream(60);
+    const combinedTracks = [
+        ...canvasStream.getVideoTracks(),
+        ...(audioDest ? audioDest.stream.getAudioTracks() : [])
+    ];
+    const combinedStream = new MediaStream(combinedTracks);
+
+    const mimeTypes = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+    const chosenType = mimeTypes.find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
+
+    recordedChunks = [];
+    mediaRecorder = new MediaRecorder(combinedStream, { mimeType: chosenType, videoBitsPerSecond: 6000000 });
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Nexus_Legends_Captain_Master_Guide.webm';
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    isRecording = true;
+    const expBtn = document.getElementById('exportBtn');
+    expBtn.classList.add('btn-recording');
+    expBtn.innerHTML = '<i class="fa-solid fa-stop"></i> Recording... (Click to Stop)';
+
+    mediaRecorder.start(250);
+    restartVideo();
+}
+
+function finishExport() {
+    isRecording = false;
+    stopPlaying();
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    const expBtn = document.getElementById('exportBtn');
+    expBtn.classList.remove('btn-recording');
+    expBtn.innerHTML = '<i class="fa-solid fa-download"></i> Export Video (.webm)';
+}
+
+renderFrame(0);
+</script>
+</body>
+</html>
