@@ -1820,7 +1820,6 @@ function renderTeams(teams) {
             ${user && user.role === 'captain' ? `
             <div class="mt-12 w-full max-w-2xl">
                 <div class="grid grid-cols-3 gap-6 mb-6">
-                    <button onclick="bid(10)" class="bg-gray-800 text-white p-6 rounded-3xl font-black border-2 border-white/5 text-xl ${isHighest || hasSkipped ? 'opacity-20 grayscale' : 'hover:border-cyan-400'}" ${isHighest || hasSkipped ? 'disabled' : ''}>+10M</button>
                     <button onclick="bid(50)" class="bg-cyan-400 text-black p-6 rounded-3xl font-black text-xl ${isHighest || hasSkipped ? 'opacity-20 grayscale' : ''}" ${isHighest || hasSkipped ? 'disabled' : ''}>+50M</button>
                     <button onclick="bid(100)" class="bg-cyan-400 text-black p-6 rounded-3xl font-black text-xl ${isHighest || hasSkipped ? 'opacity-20 grayscale' : ''}" ${isHighest || hasSkipped ? 'disabled' : ''}>+100M</button>
                 </div>
