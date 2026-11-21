@@ -602,6 +602,105 @@
         #chatInputContainer { visibility: visible; opacity: 1; }
         .admin-only-control { display: none !important; }
 body:has(#adminUserManagement:not(.hidden)) .admin-only-control { display: inline-flex !important; }
+        /* =========================================================
+   LIVE BURNING EFFECT FOR OFFICIAL COMMS (#chatBox)
+   ========================================================= */
+.burning-chatroom {
+    border: 2px solid #f59e0b !important;
+    box-shadow: 0 10px 30px -8px rgba(245, 158, 11, 0.35), 0 0 18px rgba(239, 68, 68, 0.18) !important;
+    animation: emberBorderPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes emberBorderPulse {
+    0%, 100% {
+        border-color: #f59e0b;
+        box-shadow: 0 10px 28px -8px rgba(245, 158, 11, 0.35), 0 0 14px rgba(239, 68, 68, 0.15);
+    }
+    50% {
+        border-color: #ea580c;
+        box-shadow: 0 10px 34px -6px rgba(234, 88, 12, 0.45), 0 0 24px rgba(245, 158, 11, 0.32);
+    }
+}
+
+/* Rising Heat / Flame Glow at the bottom of the chat area */
+.burning-stage::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 75px;
+    background: linear-gradient(
+        to top,
+        rgba(234, 88, 12, 0.22) 0%,
+        rgba(245, 158, 11, 0.12) 45%,
+        transparent 100%
+    );
+    pointer-events: none;
+    z-index: 3;
+    animation: flameFlicker 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes flameFlicker {
+    0% { opacity: 0.7; transform: scaleY(0.96); }
+    100% { opacity: 1; transform: scaleY(1.06); }
+}
+
+/* Lightweight Rising Sparks Layer */
+.ember-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.ember {
+    position: absolute;
+    bottom: -12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fde047 0%, #f97316 65%, transparent 100%);
+    opacity: 0;
+    animation: riseEmber linear infinite;
+}
+
+.ember:nth-child(1) { left: 10%; width: 7px; height: 7px; animation-duration: 2.8s; animation-delay: 0s; }
+.ember:nth-child(2) { left: 22%; width: 10px; height: 10px; animation-duration: 3.4s; animation-delay: 0.6s; }
+.ember:nth-child(3) { left: 36%; width: 6px; height: 6px; animation-duration: 2.5s; animation-delay: 1.2s; }
+.ember:nth-child(4) { left: 48%; width: 9px; height: 9px; animation-duration: 3.1s; animation-delay: 0.3s; }
+.ember:nth-child(5) { left: 60%; width: 7px; height: 7px; animation-duration: 2.7s; animation-delay: 1.5s; }
+.ember:nth-child(6) { left: 72%; width: 10px; height: 10px; animation-duration: 3.6s; animation-delay: 0.9s; }
+.ember:nth-child(7) { left: 82%; width: 6px; height: 6px; animation-duration: 2.4s; animation-delay: 1.8s; }
+.ember:nth-child(8) { left: 90%; width: 8px; height: 8px; animation-duration: 3.0s; animation-delay: 0.4s; }
+
+@keyframes riseEmber {
+    0% {
+        transform: translateY(0) translateX(0) scale(0.7);
+        opacity: 0;
+    }
+    15% {
+        opacity: 0.95;
+    }
+    60% {
+        transform: translateY(-160px) translateX(12px) scale(1);
+        opacity: 0.75;
+    }
+    100% {
+        transform: translateY(-320px) translateX(-10px) scale(0.3);
+        opacity: 0;
+    }
+}
+
+/* Automatic Fiery Accent on [ADMIN] Message Bubbles */
+#chatBox .text-yellow-400 + div {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+    border: 1.5px solid #f59e0b !important;
+    color: #78350f !important;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
     </style>
 </head>
 <body class="min-h-screen">
@@ -831,15 +930,23 @@ body:has(#adminUserManagement:not(.hidden)) .admin-only-control { display: inlin
                                 <div id="budgetList" class="p-3 space-y-2 max-h-[290px] overflow-y-auto bg-slate-50/70"></div>
                             </div>
 
-                            <!-- Official Communications -->
-                            <div class="premium-glass rounded-[1.75rem] h-[420px] flex flex-col overflow-hidden relative">
-                                <div class="px-5 py-4 border-b border-blue-100 bg-gradient-to-r from-blue-50 to-amber-50 flex justify-between items-center">
-                                    <span class="font-black text-xs uppercase tracking-wider flex items-center gap-2 text-blue-950">
-                                        <i class="fa-solid fa-comments text-blue-700"></i> Official Comms <span class="text-[9px] text-amber-700">(Admin & Captains)</span>
-                                    </span>
-                                </div>
+                            <!-- Official Communications (With Live Burning Effect) -->
+<div class="premium-glass burning-chatroom rounded-[1.75rem] h-[420px] flex flex-col overflow-hidden relative">
+    <div class="px-5 py-4 border-b border-amber-300/60 bg-gradient-to-r from-blue-950 via-blue-900 to-amber-700 flex justify-between items-center">
+        <span class="font-black text-xs uppercase tracking-wider flex items-center gap-2 text-white">
+            <i class="fa-solid fa-fire text-amber-400 animate-pulse"></i> Official Comms <span class="text-[9px] text-amber-200">(Admin &amp; Captains)</span>
+        </span>
+        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40">LIVE 🔥</span>
+    </div>
 
-                                <div class="flex flex-1 overflow-hidden relative">
+    <div class="flex flex-1 overflow-hidden relative burning-stage">
+        <!-- Rising Flame Embers -->
+        <div class="ember-layer">
+            <span class="ember"></span><span class="ember"></span>
+            <span class="ember"></span><span class="ember"></span>
+            <span class="ember"></span><span class="ember"></span>
+            <span class="ember"></span><span class="ember"></span>
+        </div>
                                     <div id="chatBox" class="flex-1 overflow-y-auto p-4 space-y-3 pr-14 bg-white"></div>
 
                                     <!-- Reaction Sidebar -->
