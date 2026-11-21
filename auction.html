@@ -1684,7 +1684,7 @@ function renderTeams(teams) {
             
             ${!state.isFinalCall ? `
             <div class="w-full max-w-3xl bg-gray-900 h-3 rounded-full mb-12 overflow-hidden border border-white/10">
-                <div class="h-full bg-red-600 shadow-[0_0_20px_#ff0000] transition-all duration-1000" style="width: ${(state.timeLeft/60)*100}%"></div>
+                <div class="h-full bg-red-600 shadow-[0_0_20px_#ff0000] transition-all duration-1000" style="width: ${(state.timeLeft/10)*100}%"></div>
             </div>` : ''}
 
             <div class="flex flex-col lg:flex-row items-center gap-10 w-full justify-center">
@@ -1713,9 +1713,9 @@ function renderTeams(teams) {
             ${user && user.role === 'captain' ? `
             <div class="mt-12 w-full max-w-2xl">
                 <div class="grid grid-cols-3 gap-6 mb-6">
-                    <button onclick="bid(1)" class="bg-gray-800 text-white p-6 rounded-3xl font-black border-2 border-white/5 text-xl ${isHighest || hasSkipped ? 'opacity-20 grayscale' : 'hover:border-cyan-400'}" ${isHighest || hasSkipped ? 'disabled' : ''}>+1M</button>
-                    <button onclick="bid(5)" class="bg-cyan-400 text-black p-6 rounded-3xl font-black text-xl ${isHighest || hasSkipped ? 'opacity-20 grayscale' : ''}" ${isHighest || hasSkipped ? 'disabled' : ''}>+5M</button>
-                    <button onclick="bid(10)" class="bg-cyan-400 text-black p-6 rounded-3xl font-black text-xl ${isHighest || hasSkipped ? 'opacity-20 grayscale' : ''}" ${isHighest || hasSkipped ? 'disabled' : ''}>+10M</button>
+                    <button onclick="bid(10)" class="bg-gray-800 text-white p-6 rounded-3xl font-black border-2 border-white/5 text-xl ${isHighest || hasSkipped ? 'opacity-20 grayscale' : 'hover:border-cyan-400'}" ${isHighest || hasSkipped ? 'disabled' : ''}>+10M</button>
+                    <button onclick="bid(50)" class="bg-cyan-400 text-black p-6 rounded-3xl font-black text-xl ${isHighest || hasSkipped ? 'opacity-20 grayscale' : ''}" ${isHighest || hasSkipped ? 'disabled' : ''}>+50M</button>
+                    <button onclick="bid(100)" class="bg-cyan-400 text-black p-6 rounded-3xl font-black text-xl ${isHighest || hasSkipped ? 'opacity-20 grayscale' : ''}" ${isHighest || hasSkipped ? 'disabled' : ''}>+100M</button>
                 </div>
                 <button onclick="skip()" class="w-full bg-red-600/10 text-red-500 border-2 border-red-600/30 py-4 rounded-3xl font-black uppercase tracking-[0.3em] ${hasSkipped ? 'hidden' : ''}">SKIP ROUND</button>
             </div>` : ''}
