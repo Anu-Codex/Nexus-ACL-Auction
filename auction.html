@@ -1598,30 +1598,8 @@ function startApp() {
 });
     socket.on('updateTeams', (t) => { currentTeams = t; renderTeams(t); });
     // --- UPDATED VOICE ANNOUNCEMENT LOGIC ---
-let lastHighestBidder = "";
-let lastBidAmount = 0;
-
 socket.on('updateAuction', (state) => {
-    // 1. Always run the original render function to update the UI
     renderAuction(state);
-
-    // 2. Check if a new bid was placed
-    if (state && state.highestBidder !== 'No Bids Yet') {
-        // Only announce if the bidder or the amount has actually changed
-        if (state.highestBidder !== lastHighestBidder || state.currentBid !== lastBidAmount) {
-            
-            // Trigger the Voice Feature
-            announceBid(state.highestBidder, state.currentBid);
-            
-            // Update tracking variables
-            lastHighestBidder = state.highestBidder;
-            lastBidAmount = state.currentBid;
-        }
-    } else {
-        // Reset tracking if auction is cancelled or new player starts
-        lastHighestBidder = "";
-        lastBidAmount = 0;
-    }
 });
     socket.on('newMessage', addChatMessage);
 
@@ -2113,12 +2091,11 @@ let activeMode = 'normal';
 const bgAudio = document.getElementById('bgMusic');
         const tracks = {
     normal: document.getElementById('bgMusic'),
-    intro: document.getElementById('introMusic'),
-    hype: document.getElementById('hypeMusic')
+    intro: document.getElementById('introMusic')
 };
 
 // Add all audio elements to a list for easy stopping
-const allAudioElements = [bgAudio, tracks.intro, tracks.hype];
+const allAudioElements = [bgAudio, tracks.intro];
 
 function loadPlaylistSong(index) {
     if (index >= bgPlaylist.length) {
@@ -3029,16 +3006,7 @@ function closeSoldCard() {
             </div>`;
     }).join('');
         }
-        function announceBid(team, amount) {
-    if (!window.speechSynthesis) return;
-    // Cancel previous speech to avoid overlap
-    window.speechSynthesis.cancel();
-    const text = `Bid by ${team}, ${amount} million`;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.pitch = 1;
-    utterance.rate = 1.1;
-    window.speechSynthesis.speak(utterance);
-        }
+        
         function openSquadModal(teamName) {
     const team = currentTeams.find(t => t.name === teamName);
     const squad = currentPlayers.filter(p => p.soldTo.includes(teamName));
@@ -3123,7 +3091,7 @@ function getSmartBudgetAdvice(team) {
         headerBar.style.background = "linear-gradient(90deg, #fbbf24, #d97706)";
         headerBar.style.boxShadow = "0 0 20px #fbbf24";
         subHeader.className = "text-yellow-500 font-black tracking-[0.5em] text-xs uppercase mb-2";
-        switchTrack('hype'); // Trigger hype music for Big Time
+        
     } 
     else if (cleanTier === "SHOWTIME") {
         body.classList.add('atmo-showtime');
